@@ -40,4 +40,4 @@ $DIR/jsonconvert.js compact temp/out.json -c $DIR/context.json > temp/compact.js
 $DIR/jsonconvert.js frame temp/compact.json -f $DIR/frame.json > temp/result.json
 
 $DIR/shexbuilder.js
-html2text -width 1000 temp/out.html > $outfile
+html2text temp/out.html > $outfile

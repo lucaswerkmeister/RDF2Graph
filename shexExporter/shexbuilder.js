@@ -104,7 +104,7 @@ loadJSON_ld("temp/result.json",  function (err, data) {
   }
   var fn = jade.compileFile(__dirname + '/shex.jade');
   //console.dir(data[0].class);
-  var html = fn({"data":  data[0], "_":_ ,"lib":lib} );
+  var html = fn({"data":  data[0] || { class: [] }, "_":_ ,"lib":lib} );
   fs.writeFile("temp/out.html", html, function(err) {
     if(err) {
         console.log(err);

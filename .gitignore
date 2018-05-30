@@ -13,3 +13,9 @@
 /src/main/java/nl/wur/ssb/RDF2Graph/MainJesse.java
 /RDFSimpleCon
 RDF2Graph.jar
+
+/*-results/
+/*.ttl
+/*.shex
+/run
+/temp

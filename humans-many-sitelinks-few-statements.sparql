@@ -1,0 +1,8 @@
+SELECT ?item WHERE {
+  ?item wdt:P31 wd:Q5;
+        wikibase:sitelinks ?sitelinks. hint:Prior hint:rangeSafe true.
+  ?item wikibase:statements ?statements. hint:Prior hint:rangeSafe true.
+  FILTER(?sitelinks > 75)
+}
+ORDER BY ASC(?statements)
+LIMIT 1000

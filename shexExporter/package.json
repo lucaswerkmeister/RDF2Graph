@@ -1,0 +1,31 @@
+{
+  "name": "rdf2graph-shex-exporter",
+  "version": "1.0.0",
+  "description": "Export RDF2Graph results into ShEx.",
+  "main": "export.sh",
+  "dependencies": {
+    "async": "^1.5.2",
+    "commander": "^2.15.1",
+    "jade": "^1.11.0",
+    "lodash": "^4.17.10",
+    "request": "^2.87.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jessevdam/RDF2Graph.git"
+  },
+  "keywords": [
+    "rdf",
+    "shex"
+  ],
+  "author": "Jesse van Dam",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jessevdam/RDF2Graph/issues"
+  },
+  "homepage": "https://github.com/jessevdam/RDF2Graph#readme"
+}

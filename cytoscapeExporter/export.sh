@@ -1,6 +1,6 @@
 echo "Creating network based view"
 if ! which Cytoscape >/dev/null ; then
-    echo "Please make sure Cystoscape is available in the PATH enviroment"
+    echo "Please make sure Cytoscape is available in the PATH enviroment"
     exit
 fi
 echo "If cytoscape opens whithout any other events occuring, please make sure to install at least one app (known cytoscape bug)"

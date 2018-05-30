@@ -1,3 +1,5 @@
+#!/bin/bash
+set -e
 echo "Creating SHEX file"
 project=$1 
 outfile=$2

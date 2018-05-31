@@ -1,5 +1,5 @@
 SELECT (max(?count) as ?max) #(min(?count) as ?min)
-FROM <%1$s>
+FROM <%4$s>
 WHERE
 { 
   {
@@ -8,10 +8,10 @@ WHERE
       {
         SELECT ?subj ?target
         {
-          ?subj a <%2$s> . 
-          ?subj <%3$s> ?target .
+          ?subj a <%1$s> . 
+          ?subj <%2$s> ?target .
  		  BIND(iri(DATATYPE(?target)) as ?dtype)
- 		  FILTER(bound(?dtype) && ?dtype = <%4$s>)       
+ 		  FILTER(bound(?dtype) && ?dtype = <%3$s>)       
         }
         LIMIT 100000
       }      

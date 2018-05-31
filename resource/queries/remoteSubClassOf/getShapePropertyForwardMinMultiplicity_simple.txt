@@ -1,19 +1,19 @@
 SELECT *
-FROM <%1$s>
+FROM <%4$s>
 WHERE
 { 
   {
-    ?subj a <%2$s> .
+    ?subj a <%1$s> .
   }
   UNION
   { 
-    ?subj rdfs:subClassOf+ <%2$s> .
+    ?subj rdfs:subClassOf+ <%1$s> .
   }
   FILTER NOT EXISTS
   {
-    ?subj <%3$s> ?target .
+    ?subj <%2$s> ?target .
     BIND(iri(DATATYPE(?target)) as ?dtype)
-    FILTER(bound(?dtype) && ?dtype = <%4$s>)
+    FILTER(bound(?dtype) && ?dtype = <%3$s>)
   }
 }
 LIMIT 1

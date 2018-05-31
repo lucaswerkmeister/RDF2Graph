@@ -1,8 +1,8 @@
 SELECT (COUNT(*) as ?count)
-FROM <%1$s>
+FROM <%2$s>
 WHERE
 {
-  ?subj <%2$s> ?obj .
+  ?subj <%1$s> ?obj .
   FILTER NOT EXISTS
   {
     ?subj a ?type .

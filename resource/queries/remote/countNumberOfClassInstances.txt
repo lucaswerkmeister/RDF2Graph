@@ -1,6 +1,6 @@
 SELECT (COUNT(*) as ?count)
-FROM <%1$s>
+FROM <%2$s>
 WHERE
 {
-  ?s a <%2$s> .
+  ?s a <%1$s> .
 }

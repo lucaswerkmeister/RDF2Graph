@@ -1,12 +1,12 @@
 SELECT (COUNT(*) as ?count)
-FROM <%1$s>
+FROM <%2$s>
 WHERE
 {
   {
     SELECT *
     WHERE
     {
-      ?subj <%2$s> ?obj .
+      ?subj <%1$s> ?obj .
     }
     LIMIT 1000000
   }

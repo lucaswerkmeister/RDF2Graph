@@ -1,12 +1,12 @@
 SELECT DISTINCT ?refType ?xsdType
-FROM <%1$s>
+FROM <%3$s>
 WHERE
 { 
   {
     SELECT ?subj ?target
     {
-      ?subj a <%2$s> .
-      ?subj <%3$s> ?target .
+      ?subj a <%1$s> .
+      ?subj <%2$s> ?target .
     }
     LIMIT 1000000 #virtuoso 100000
   }  
@@ -16,7 +16,7 @@ WHERE
   }
   #OPTIONAL
   #{
-  #  ?subj <%3$s> ?target .
+  #  ?subj <%2$s> ?target .
   BIND(DATATYPE(?target) as ?xsdType)
   #}
 }

@@ -1,11 +1,11 @@
 SELECT DISTINCT ?pred
-FROM <%1$s>
+FROM <%2$s>
 WHERE
 { 
   {
     SELECT ?pred
     {
-      ?subj a <%2$s> .
+      ?subj a <%1$s> .
       ?subj ?pred ?target .
     }
     LIMIT 1000000

@@ -1,6 +1,6 @@
 #SELECT LIMIT ...
 SELECT (max(?count) as ?max) #(min(?count) as ?min)
-FROM <%1$s>
+FROM <%4$s>
 WHERE
 { 
   {
@@ -10,19 +10,19 @@ WHERE
         SELECT ?subj ?target
         {
           {
-            ?subj a <%2$s> .
+            ?subj a <%1$s> .
           }
           UNION
           { 
-            ?subj rdfs:subClassOf+ <%2$s> .
+            ?subj rdfs:subClassOf+ <%1$s> .
           }
-          ?subj <%3$s> ?target .
+          ?subj <%2$s> ?target .
           {
-            ?target a <%4$s> .     
+            ?target a <%3$s> .     
           }
           UNION
           {
-            ?target rdfs:subClassOf+ <%4$s> .
+            ?target rdfs:subClassOf+ <%3$s> .
           }
         }
         LIMIT 100000

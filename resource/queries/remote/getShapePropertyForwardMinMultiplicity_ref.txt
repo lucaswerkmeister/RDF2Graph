@@ -1,18 +1,18 @@
 SELECT *
-FROM <%1$s>
+FROM <%4$s>
 WHERE
 { 
   {
     SELECT ?subj
     {
-      ?subj a <%2$s> .
+      ?subj a <%1$s> .
     }
     LIMIT 100000 
   }
   FILTER NOT EXISTS
   {
-    ?subj <%3$s> ?target .
-    ?target a <%4$s> .
+    ?subj <%2$s> ?target .
+    ?target a <%3$s> .
   }
 }
 LIMIT 1

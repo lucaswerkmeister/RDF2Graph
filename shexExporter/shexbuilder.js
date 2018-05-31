@@ -66,6 +66,11 @@ lib.comment = function()
     return "#" + lib.typeComment;
 }
 
+lib.filterErrors = function(val)
+{
+  return val.filter(function(elem) { return !("error" in elem); });
+}
+
 function objectifyJSONLD(input,callback)
 { 
   jsonld.objectify(input['@graph'], input['@context'], {expandContext:input['@context']},

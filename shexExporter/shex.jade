@@ -17,6 +17,7 @@ html
         - each prop,index in props
           | 
           - var typeLinks = lib.to_array(prop.linkTo)
+          - typeLinks = lib.filterErrors(typeLinks)
           - if(typeLinks.length == 1)
             | 
             |   #{'<'}#{prop.rdfProperty['@id']}> #{lib.encodeType(prop.linkTo.type['@id'])}#{lib.encodeMultiplicity(prop.linkTo.forwardMultiplicity['@id'])}#{ index == props.length - 1 ? "" : ","} #{lib.comment()}

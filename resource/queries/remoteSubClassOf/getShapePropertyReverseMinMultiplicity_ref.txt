@@ -6,11 +6,11 @@ WHERE
     SELECT ?target
     {
       {
-        ?target a <%1$s> .
+        ?target wdt:P31 <%1$s> .
       }
       UNION
       {
-        ?target rdfs:subClassOf+ <%1$s> .
+        ?target wdt:P279+ <%1$s> .
       }
     }
     LIMIT 1000000
@@ -19,11 +19,11 @@ WHERE
   {
     ?subj <%2$s> ?target .
     {
-      ?subj a <%3$s> .
+      ?subj wdt:P31 <%3$s> .
     }
     UNION
     {
-      ?subj rdfs:subClassOf+ <%3$s> .
+      ?subj wdt:P279+ <%3$s> .
     }
   }
 }

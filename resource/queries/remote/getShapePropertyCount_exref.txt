@@ -5,7 +5,7 @@ WHERE
   {
     SELECT *
     {
-      ?subj a <%1$s> .
+      ?subj wdt:P31 <%1$s> .
       ?subj <%2$s> ?target .
       FILTER NOT EXISTS
       {

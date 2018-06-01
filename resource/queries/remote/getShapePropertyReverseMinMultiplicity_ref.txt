@@ -5,14 +5,14 @@ WHERE
   {
     SELECT ?target
     {
-      ?target a <%1$s> .
+      ?target wdt:P31 <%1$s> .
     }
     LIMIT 100000
   }
   FILTER NOT EXISTS
   {
     ?subj <%2$s> ?target .
-    ?subj a <%3$s> .
+    ?subj wdt:P31 <%3$s> .
   }
 }
 LIMIT 1

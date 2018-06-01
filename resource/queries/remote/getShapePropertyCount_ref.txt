@@ -5,11 +5,11 @@ WHERE
   {
     SELECT *
     {
-      ?subj a <%1$s> .
+      ?subj wdt:P31 <%1$s> .
       ?subj <%2$s> ?target .
       FILTER EXISTS
       {
-        ?target a <%3$s> .
+        ?target wdt:P31 <%3$s> .
       }
     }
     LIMIT 100000

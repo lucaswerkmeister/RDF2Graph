@@ -5,7 +5,7 @@ WHERE
   {
     SELECT *
     {
-      ?subj a <%1$s> .
+      ?subj wdt:P31 <%1$s> .
       ?subj <%2$s> ?target .
       BIND(iri(DATATYPE(?target)) as ?dtype)
       FILTER(bound(?dtype) && ?dtype = <%3$s>)

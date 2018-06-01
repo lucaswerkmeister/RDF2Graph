@@ -6,11 +6,11 @@ WHERE
     SELECT ?subj
     {
       {
-        ?subj a <%1$s> .
+        ?subj wdt:P31 <%1$s> .
       }
       UNION
       {
-        ?subj rdfs:subClassOf+ <%1$s> .
+        ?subj wdt:P279+ <%1$s> .
       }
       ?subj <%2$s> ?target .
     }
@@ -18,19 +18,19 @@ WHERE
   }
   OPTIONAL
   {
-    ?target a ?refType .
+    ?target wdt:P31 ?refType .
     FILTER(!(?refType = owl:Class || ?refType = rdfs:Class))
   }
   OPTIONAL
   {
     {
-      ?target a owl:Class
+      ?target wdt:P31 owl:Class
     }
     UNION
     {
-      ?target a rdfs:Class
+      ?target wdt:P31 rdfs:Class
     }
-    ?target rdfs:subClassOf ?refType .
+    ?target wdt:P279 ?refType .
   }
  # OPTIONAL
  # {

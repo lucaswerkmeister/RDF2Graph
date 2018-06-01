@@ -2,5 +2,5 @@ SELECT (COUNT(*) as ?count)
 FROM <%2$s>
 WHERE
 {
-  ?s a <%1$s> .
+  ?s wdt:P31 <%1$s> .
 }

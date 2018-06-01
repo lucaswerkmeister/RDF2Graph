@@ -3,10 +3,10 @@ FROM <%1$s>
 WHERE
 {
   {
-    ?s a ?class .
+    ?s wdt:P31 ?class .
   }
   UNION
   {
-    ?s rdfs:subClassOf ?class .
+    ?s wdt:P279 ?class .
   }
 }

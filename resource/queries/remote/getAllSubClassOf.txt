@@ -2,7 +2,7 @@ SELECT ?child ?parent
 FROM <%1$s>
 WHERE
 {
-  ?child rdfs:subClassOf ?parent .
+  ?child wdt:P279 ?parent .
   FILTER(!isBlank(?parent))
   FILTER(!isBlank(?child))
 }

@@ -5,6 +5,6 @@ WHERE
   ?subj <%1$s> ?obj .
   FILTER NOT EXISTS
   {
-    ?subj a ?type .
+    ?subj wdt:P31 ?type .
   }
 }

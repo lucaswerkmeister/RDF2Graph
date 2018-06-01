@@ -12,6 +12,6 @@ WHERE
   }
   FILTER NOT EXISTS
   {
-    ?subj a ?type .
+    ?subj wdt:P31 ?type .
   }
 }

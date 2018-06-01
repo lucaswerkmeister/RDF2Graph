@@ -3,12 +3,12 @@ SELECT *
 FROM <%3$s>
 WHERE
 {
-  ?subj a <%1$s> .
+  ?subj wdt:P31 <%1$s> .
   ?subj <%2$s> ?target .
   ?target ?pred ?obj .
   FILTER NOT EXISTS
   {
-    ?target a ?type .
+    ?target wdt:P31 ?type .
   }
 }
 LIMIT 1

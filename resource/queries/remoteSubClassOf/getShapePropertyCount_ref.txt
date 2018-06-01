@@ -3,21 +3,21 @@ FROM <%4$s>
 WHERE
 {
   {
-    ?subj a <%1$s> .
+    ?subj wdt:P31 <%1$s> .
   }
   UNION
   {
-    ?subj rdfs:subClassOf+ <%1$s> .
+    ?subj wdt:P279+ <%1$s> .
   }
   ?subj <%2$s> ?target .
   FILTER EXISTS
   {
     {
-      ?target a <%3$s> .
+      ?target wdt:P31 <%3$s> .
     }
     UNION
     {
-      ?subj rdfs:subClassOf+ <%3$s> .
+      ?subj wdt:P279+ <%3$s> .
     }
   }
 }

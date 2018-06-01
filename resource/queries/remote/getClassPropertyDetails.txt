@@ -5,14 +5,14 @@ WHERE
   {
     SELECT ?subj ?target
     {
-      ?subj a <%1$s> .
+      ?subj wdt:P31 <%1$s> .
       ?subj <%2$s> ?target .
     }
     LIMIT 1000000 #virtuoso 100000
   }
   OPTIONAL
   {
-    ?target a ?refType .
+    ?target wdt:P31 ?refType .
   }
   #OPTIONAL
   #{

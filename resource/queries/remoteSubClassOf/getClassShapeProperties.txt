@@ -6,11 +6,11 @@ WHERE
     SELECT ?pred
     {
       {
-        ?subj a <%1$s> .
+        ?subj wdt:P31 <%1$s> .
       }
       UNION
       {
-        ?subj rdfs:subClassOf+ <%1$s> .
+        ?subj wdt:P279+ <%1$s> .
       }
       ?subj ?pred ?target .
     }

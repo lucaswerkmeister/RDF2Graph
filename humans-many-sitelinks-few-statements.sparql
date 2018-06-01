@@ -5,4 +5,4 @@ SELECT ?item WHERE {
   FILTER(?sitelinks > 75)
 }
 ORDER BY ASC(?statements)
-LIMIT 1000
+LIMIT 50

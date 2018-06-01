@@ -3,8 +3,6 @@
 
 var fs = require('fs');
 var jsonld = require('./jsonld.js') 
-var jade = require('jade');
-var _ = require('lodash');
 
 var lib = {};
 
@@ -64,6 +62,8 @@ lib.comment = function()
   }
   else if(lib.typeComment != null)
     return "#" + lib.typeComment;
+  else
+    return "";
 }
 
 lib.filterErrors = function(val)
@@ -102,19 +102,67 @@ function loadJSON_ld(file,callback)
   });
 }
 
+function formatIri(iri) {
+  return '<' + iri + '>';
+}
+
+function processResult(data)
+{
+  process.stdout.write('PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n');
+  process.stdout.write('PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n');
+  for (const clazz of data['class']) {
+    if (clazz.subClassOf) {
+      process.stdout.write(`${formatIri(clazz['@id'])} & ${lib.to_array(clazz.subClassOf).map(formatIri).join()} {`);
+    } else {
+      process.stdout.write(`${formatIri(clazz['@id'])} {`);
+    }
+    const props = lib.to_array(clazz.property);
+    let firstProp = true;
+    for (const prop of props) {
+      let typeLinks = lib.to_array(prop.linkTo);
+      typeLinks = lib.filterErrors(typeLinks);
+      const typeLinksFormatted = [];
+      for (const typeLink of typeLinks) {
+        const iri = formatIri(prop.rdfProperty['@id']),
+              type = lib.encodeType(typeLink.type['@id']),
+              multiplicity = lib.encodeMultiplicity(typeLink.forwardMultiplicity['@id']),
+              comment = lib.comment();
+        let typeLinkFormatted = `${iri} ${type}${multiplicity}`;
+        if (comment) {
+          typeLinkFormatted += ` ${comment}`;
+        }
+        typeLinksFormatted.push(typeLinkFormatted);
+      }
+      if (typeLinksFormatted.length) {
+          if (firstProp) {
+              process.stdout.write('\n');
+              firstProp = false;
+          } else {
+              process.stdout.write(',\n');
+          }
+        if (typeLinksFormatted.length === 1) {
+          process.stdout.write(`  ${typeLinksFormatted[0]}`);
+        } else {
+          process.stdout.write(`  (\n`);
+          const lastTypeLinkFormatted = typeLinksFormatted.pop();
+          for (const typeLinkFormatted of typeLinksFormatted) {
+            process.stdout.write(`    ${typeLinkFormatted} |\n`);
+          }
+          process.stdout.write(`    ${lastTypeLinkFormatted}\n`);
+          process.stdout.write(`  )`);
+        }
+      }
+    }
+    process.stdout.write('\n}\n\n');
+  }
+}
+
 loadJSON_ld("temp/result.json",  function (err, data) {
   if (err) {
     console.log('Error: ' + err);
     return;
   }
-  var fn = jade.compileFile(__dirname + '/shex.jade');
-  //console.dir(data[0].class);
-  var html = fn({"data":  data[0] || { class: [] }, "_":_ ,"lib":lib} );
-  fs.writeFile("temp/out.html", html, function(err) {
-    if(err) {
-        console.log(err);
-    } 
-  }); 
+  processResult(data[0] || { class: [] });
 
 });
 

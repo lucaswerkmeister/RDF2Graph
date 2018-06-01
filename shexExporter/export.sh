@@ -41,5 +41,4 @@ $DIR/jsonconvert.js convert ./temp/temp.n4  > temp/out.json
 $DIR/jsonconvert.js compact temp/out.json -c $DIR/context.json > temp/compact.json
 $DIR/jsonconvert.js frame temp/compact.json -f $DIR/frame.json > temp/result.json
 
-$DIR/shexbuilder.js
-html2text temp/out.html > $outfile
+$DIR/shexbuilder.js > $outfile

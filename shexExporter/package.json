@@ -6,8 +6,6 @@
   "dependencies": {
     "async": "^1.5.2",
     "commander": "^2.15.1",
-    "jade": "^1.11.0",
-    "lodash": "^4.17.10",
     "request": "^2.87.0"
   },
   "devDependencies": {},

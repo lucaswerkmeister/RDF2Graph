@@ -21,3 +21,5 @@ all: $(patsubst %.sparql,%.shex,$(wildcard *.sparql))
 clean:
 	$(RM) $(patsubst %.sparql,%.ttl,$(wildcard *.sparql))
 	$(RM) -r $(patsubst %.sparql,%-results,$(wildcard *.sparql))
+	$(RM) -r $(patsubst %.sparql,%.shex,$(wildcard *.sparql))
+	$(RM) -r run/ temp/

@@ -7,7 +7,7 @@ all: $(patsubst %.sparql,%.shex,$(wildcard *.sparql))
 	curl --location http://wikiba.se/ontology-beta | rdfparse | sed 's|http://wikiba.se/ontology|&-beta|g' > $@
 	curl --get --header 'Accept: application/json' --data-urlencode "query=$$(cat $<)" https://query.wikidata.org/sparql | \
 	jq --raw-output '.results.bindings | .[] | .item.value' | \
-	while read -r uri; do curl --silent --header 'Accept: text/turtle' --location -- "$$uri"; done >> $@
+	xargs curl --silent --header 'Accept: text/turtle' --location -- >> $@
 
 %-results: %.ttl
 	fuseki-server --file $< /$* & \

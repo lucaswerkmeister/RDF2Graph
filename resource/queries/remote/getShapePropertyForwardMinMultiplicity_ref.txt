@@ -1,13 +1,13 @@
 SELECT *
 FROM <%4$s>
 WHERE
-{ 
+{
   {
     SELECT ?subj
     {
       ?subj a <%1$s> .
     }
-    LIMIT 100000 
+    LIMIT 100000
   }
   FILTER NOT EXISTS
   {

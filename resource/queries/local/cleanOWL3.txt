@@ -1,13 +1,13 @@
-#PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+#PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 #PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-#PREFIX RDF2Graph: <http://ssb.wur.nl/RDF2Graph/>	
+#PREFIX RDF2Graph: <http://ssb.wur.nl/RDF2Graph/>
 #PREFIX owl: <http://www.w3.org/2002/07/owl#>
-#PREFIX rs: <http://open-services.net/ns/core#>		
+#PREFIX rs: <http://open-services.net/ns/core#>
 
 #remove any classes that have no class prop and are not referenced by something
 #WITH <http://ssb.wur.nl/RDF2Graph/>
 #USING <http://ssb.wur.nl/RDF2Graph/>
-#FROM <http://ssb.wur.nl/RDF2Graph/> 
+#FROM <http://ssb.wur.nl/RDF2Graph/>
 DELETE
 {
   ?class a RDF2Graph:Class .
@@ -16,11 +16,11 @@ DELETE
   ?class rdfs:subClassOf ?parent .
 }
 #SELECT *
-#FROM <http://ssb.wur.nl/RDF2Graph/> 
+#FROM <http://ssb.wur.nl/RDF2Graph/>
 WHERE
 {
   ?class a RDF2Graph:Class .
-  FILTER(regex(str(?class),"http://www.w3.org/2002/07/owl#.*") || regex(str(?class),"http://www.w3.org/2000/01/rdf-schema#.*")  || regex(str(?class),"http://www.w3.org/1999/02/22-rdf-syntax-ns#.*"))  
+  FILTER(regex(str(?class),"http://www.w3.org/2002/07/owl#.*") || regex(str(?class),"http://www.w3.org/2000/01/rdf-schema#.*")  || regex(str(?class),"http://www.w3.org/1999/02/22-rdf-syntax-ns#.*"))
   #Only keep the owl:Class itself
   FILTER NOT EXISTS
   {
@@ -49,7 +49,7 @@ WHERE
     ?class RDF2Graph:subClassOfInstanceCount ?subCount .
   }
   OPTIONAL
-  {  
+  {
     ?class rdfs:subClassOf ?parent .
   }
 }

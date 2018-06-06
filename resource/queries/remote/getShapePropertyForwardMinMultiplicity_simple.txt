@@ -1,8 +1,8 @@
 SELECT *
 FROM <%4$s>
 WHERE
-{ 
-  ?subj a <%1$s> . 
+{
+  ?subj a <%1$s> .
   FILTER NOT EXISTS
   {
     ?subj <%2$s> ?target .

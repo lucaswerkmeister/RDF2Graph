@@ -3,7 +3,7 @@
 #WITH <http://ssb.wur.nl/RDF2Graph/>
 #USING <http://ssb.wur.nl/RDF2Graph/>
 SELECT DISTINCT ?property
-#FROM <http://ssb.wur.nl/RDF2Graph/> 
+#FROM <http://ssb.wur.nl/RDF2Graph/>
 WHERE
 {
   ?property a rdf:Property .

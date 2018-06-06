@@ -1,25 +1,25 @@
 SELECT (max(?count) as ?max) #(min(?count) as ?min)
 FROM <%3$s>
 WHERE
-{ 
+{
   {
     SELECT (count(?subj) as ?count)
     {
       {
         SELECT ?subj ?target
         {
-          ?subj a <%1$s> . 
+          ?subj a <%1$s> .
           ?subj <%2$s> ?target .
  		  FILTER NOT EXISTS
-  		  { 
+  		  {
    			?target ?pred ?obj
   	      }
   		  BIND(DATATYPE(?target) as ?dtype)
-  		  FILTER(!bound(?dtype))          
+  		  FILTER(!bound(?dtype))
         }
         LIMIT 100000
-      }      
+      }
     }
-    GROUP BY ?target 
+    GROUP BY ?target
   }
 }

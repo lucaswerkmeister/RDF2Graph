@@ -1,7 +1,7 @@
 SELECT (COUNT(*) as ?count)
 FROM <%3$s>
 WHERE
-{ 
+{
   {
     ?subj a <%1$s> .
   }
@@ -11,7 +11,7 @@ WHERE
   }
   ?subj <%2$s> ?target .
   FILTER NOT EXISTS
-  { 
+  {
     ?target ?pred ?obj
   }
   BIND(DATATYPE(?target) as ?dtype)

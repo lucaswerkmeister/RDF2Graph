@@ -2,7 +2,7 @@
 SELECT (max(?count) as ?max) #(min(?count) as ?min)
 FROM <%4$s>
 WHERE
-{ 
+{
   {
     SELECT (count(?target) as ?count)
     {
@@ -13,12 +13,12 @@ WHERE
             ?subj a <%1$s> .
           }
           UNION
-          { 
+          {
             ?subj rdfs:subClassOf+ <%1$s> .
           }
           ?subj <%2$s> ?target .
           {
-            ?target a <%3$s> .     
+            ?target a <%3$s> .
           }
           UNION
           {
@@ -26,8 +26,8 @@ WHERE
           }
         }
         LIMIT 100000
-      }      
+      }
     }
-    GROUP BY ?subj 
+    GROUP BY ?subj
   }
 }

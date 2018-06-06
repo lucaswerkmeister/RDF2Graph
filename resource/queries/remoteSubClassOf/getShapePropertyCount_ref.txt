@@ -1,7 +1,7 @@
 SELECT (COUNT(*) as ?count)
 FROM <%4$s>
 WHERE
-{ 
+{
   {
     ?subj a <%1$s> .
   }
@@ -12,7 +12,7 @@ WHERE
   ?subj <%2$s> ?target .
   FILTER EXISTS
   {
-    { 
+    {
       ?target a <%3$s> .
     }
     UNION

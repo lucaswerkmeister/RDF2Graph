@@ -3,7 +3,7 @@
 #WITH <http://ssb.wur.nl/RDF2Graph/>
 #USING <http://ssb.wur.nl/RDF2Graph/>
 SELECT ?source ?type ?forwardMultiplicity ?reverseMultiplicity ?count
-#FROM <http://ssb.wur.nl/RDF2Graph/> 
+#FROM <http://ssb.wur.nl/RDF2Graph/>
 WHERE
 {
   ?classProp RDF2Graph:rdfProperty <%s> .

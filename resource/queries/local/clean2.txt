@@ -10,7 +10,7 @@ INSERT
 }
 #USING <http://ssb.wur.nl/RDF2Graph/>
 #SELECT *
-#FROM <http://ssb.wur.nl/RDF2Graph/> 
+#FROM <http://ssb.wur.nl/RDF2Graph/>
 WHERE
 {
   ?class rdfs:subClassOf owl:Thing .

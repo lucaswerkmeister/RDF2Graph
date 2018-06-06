@@ -1,7 +1,7 @@
 SELECT *
 FROM <%4$s>
 WHERE
-{ 
+{
   {
     SELECT ?target
     {
@@ -13,7 +13,7 @@ WHERE
         ?target rdfs:subClassOf+ <%1$s> .
       }
     }
-    LIMIT 1000000 
+    LIMIT 1000000
   }
   FILTER NOT EXISTS
   {
@@ -22,7 +22,7 @@ WHERE
       ?subj a <%3$s> .
     }
     UNION
-    { 
+    {
       ?subj rdfs:subClassOf+ <%3$s> .
     }
   }

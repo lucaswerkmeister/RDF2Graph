@@ -1,13 +1,13 @@
 #remove all links to the temporary properties before the cleaning step
 #WITH <http://ssb.wur.nl/RDF2Graph/>
 #USING <http://ssb.wur.nl/RDF2Graph/>
-#FROM <http://ssb.wur.nl/RDF2Graph/> 
+#FROM <http://ssb.wur.nl/RDF2Graph/>
 DELETE
 {
   ?clazz RDF2Graph:property ?classProp .
   ?classProp a RDF2Graph:ClassProperty .
   ?classProp RDF2Graph:rdfProperty ?prop .
-     
+
   ?classProp RDF2Graph:linkTo ?typeLink .
   ?typeLink a RDF2Graph:TypeLink .
   ?typeLink RDF2Graph:type ?type .
@@ -24,7 +24,7 @@ WHERE
   ?clazz RDF2Graph:property ?classProp .
   ?classProp a RDF2Graph:ClassProperty .
   ?classProp RDF2Graph:rdfProperty ?prop .
-   
+
   ?classProp RDF2Graph:linkTo ?typeLink .
   ?typeLink a RDF2Graph:TypeLink .
   ?typeLink RDF2Graph:type ?type .

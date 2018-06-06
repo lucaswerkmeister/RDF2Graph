@@ -2,7 +2,7 @@
 SELECT *
 FROM <%3$s>
 WHERE
-{ 
+{
   {
     ?subj a <%1$s> .
   }

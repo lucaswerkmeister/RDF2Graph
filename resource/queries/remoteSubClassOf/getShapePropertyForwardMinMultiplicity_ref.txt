@@ -1,7 +1,7 @@
 SELECT *
 FROM <%4$s>
 WHERE
-{ 
+{
   {
     SELECT ?subj
     {
@@ -9,11 +9,11 @@ WHERE
         ?subj a <%1$s> .
       }
       UNION
-      { 
+      {
         ?subj rdfs:subClassOf+ <%1$s> .
       }
     }
-    LIMIT 1000000 
+    LIMIT 1000000
   }
   FILTER NOT EXISTS
   {

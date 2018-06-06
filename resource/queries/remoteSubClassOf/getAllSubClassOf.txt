@@ -3,6 +3,6 @@ FROM <%1$s>
 WHERE
 {
   ?child rdfs:subClassOf ?parent .
-  FILTER(!isBlank(?parent)) 
-  FILTER(!isBlank(?child)) 
+  FILTER(!isBlank(?parent))
+  FILTER(!isBlank(?child))
 }

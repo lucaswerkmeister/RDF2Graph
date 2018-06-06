@@ -1,17 +1,17 @@
 SELECT (COUNT(*) as ?count)
 FROM <%4$s>
 WHERE
-{ 
+{
   {
     SELECT *
     {
-      ?subj a <%1$s> . 
+      ?subj a <%1$s> .
       ?subj <%2$s> ?target .
       FILTER EXISTS
-      { 
+      {
         ?target a <%3$s> .
       }
     }
     LIMIT 100000
-  }  
+  }
 }

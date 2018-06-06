@@ -1,7 +1,7 @@
 SELECT (max(?count) as ?max) #(min(?count) as ?min)
 FROM <%3$s>
 WHERE
-{ 
+{
   {
     SELECT (count(?target) as ?count)
     {
@@ -14,18 +14,18 @@ WHERE
           UNION
           {
             ?subj rdfs:subClassOf+ <%1$s> .
-          } 
+          }
           ?subj <%2$s> ?target .
  		  FILTER NOT EXISTS
-  		  { 
+  		  {
    			?target ?pred ?obj
   	      }
   		  BIND(DATATYPE(?target) as ?dtype)
-  		  FILTER(!bound(?dtype))          
+  		  FILTER(!bound(?dtype))
         }
         LIMIT 100000
-      }      
+      }
     }
-    GROUP BY ?subj 
+    GROUP BY ?subj
   }
 }

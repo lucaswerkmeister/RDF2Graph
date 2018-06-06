@@ -3,6 +3,7 @@ SELECT ?item WHERE {
         wikibase:sitelinks ?sitelinks. hint:Prior hint:rangeSafe true.
   ?item wikibase:statements ?statements. hint:Prior hint:rangeSafe true.
   FILTER(?sitelinks > 75)
+  FILTER(?statements < 50)
 }
 ORDER BY ASC(?statements)
 LIMIT 50

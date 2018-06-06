@@ -4,6 +4,14 @@
 var fs = require('fs');
 var jsonld = require('./jsonld.js') 
 
+const prefixes = {
+  xsd: 'http://www.w3.org/2001/XMLSchema#',
+  rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+  rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+  skos: 'http://www.w3.org/2004/02/skos/core#',
+  schema: 'http://schema.org/',
+};
+
 var lib = {};
 
 lib.to_array = function(val)
@@ -49,7 +57,7 @@ lib.encodeType = function(val)
   {
     return "rdf:langString";
   }
-  return "@<" + val + ">";
+  return "@" + formatIri(val);
 }
 
 lib.comment = function()
@@ -103,13 +111,22 @@ function loadJSON_ld(file,callback)
 }
 
 function formatIri(iri) {
+  for (const [prefix, namespace] of Object.entries(prefixes)) {
+    if (iri.startsWith(namespace)) {
+      return `${prefix}:${iri.substring(namespace.length)}`;
+    }
+  }
+
   return '<' + iri + '>';
 }
 
 function processResult(data)
 {
-  process.stdout.write('PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n');
-  process.stdout.write('PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n');
+  for (const [prefix, namespace] of Object.entries(prefixes)) {
+    process.stdout.write(`PREFIX ${prefix}: <${namespace}>\n`);
+  }
+  process.stdout.write('\n');
+
   for (const clazz of data['class']) {
     if (clazz.subClassOf) {
       process.stdout.write(`${formatIri(clazz['@id'])} & ${lib.to_array(clazz.subClassOf).map(formatIri).join()} {`);

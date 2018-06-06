@@ -10,6 +10,10 @@ const prefixes = {
   rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
   skos: 'http://www.w3.org/2004/02/skos/core#',
   schema: 'http://schema.org/',
+  wikibase: 'http://wikiba.se/ontology-beta#',
+  wd: 'http://www.wikidata.org/entity/',
+  wdt: 'http://www.wikidata.org/prop/direct/',
+  wdtn: 'http://www.wikidata.org/prop/direct-normalized/',
 };
 
 var multiplicityComment, typeComment;

@@ -11,7 +11,7 @@ all: $(patsubst %.sparql,%.shex,$(wildcard *.sparql))
 
 %-results: %.ttl
 	fuseki-server --file $< /$* & \
-	sleep 7m ; \
+	bash -c 'while ! exec 3</dev/tcp/localhost/3030; do sleep 5s; done' 2>/dev/null ; \
 	java -jar RDF2Graph.jar $@ http://localhost:3030/$*/query --all ; \
 	kill %1
 

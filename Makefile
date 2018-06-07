@@ -3,13 +3,20 @@
 
 all: $(patsubst %.sparql,%.html,$(wildcard *.sparql))
 
+external-identifier-patterns:
+	curl --get --header 'Accept: application/json' --data-urlencode 'query=SELECT ?id WHERE { ?id wikibase:propertyType wikibase:ExternalId. }' https://query.wikidata.org/sparql | \
+	jq --raw-output '.results.bindings | .[] | (.id.value[30:40] + ">")' > $@
+
 %.ttl: %.sparql
 	curl --location http://wikiba.se/ontology-beta | rdfparse | sed 's|http://wikiba.se/ontology|&-beta|g' > $@
 	curl --get --header 'Accept: application/json' --data-urlencode "query=$$(cat $<)" https://query.wikidata.org/sparql | \
 	jq --raw-output '.results.bindings | .[] | .item.value' | \
 	xargs curl --silent --header 'Accept: text/turtle' --location -- >> $@
 
-%-results: %.ttl
+%.nt: %.ttl external-identifier-patterns
+	ntriples $< | grep -vFf external-identifier-patterns > $@
+
+%-results: %.nt
 	fuseki-server --file $< /$* & \
 	bash -c 'while ! exec 3</dev/tcp/localhost/3030; do sleep 5s; done' 2>/dev/null ; \
 	java -jar RDF2Graph.jar $@ http://localhost:3030/$*/query --all ; \

@@ -17,5 +17,6 @@ RDF2Graph.jar
 /*-results/
 /*.ttl
 /*.shex
+/*.html
 /run
 /temp

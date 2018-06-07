@@ -1,0 +1,16 @@
+SELECT ?item WITH {
+  SELECT (?item AS ?item_) WHERE {
+    ?item wdt:P31 wd:Q5;
+          wdt:P39 wd:Q11696.
+  }
+} AS %results WHERE {
+  {
+    INCLUDE %results.
+    BIND(?item_ AS ?item)
+  } UNION {
+    INCLUDE %results.
+    ?property wikibase:propertyType wikibase:WikibaseItem;
+              wikibase:directClaim ?wdt.
+    ?item_ ?wdt ?item.
+  }
+}

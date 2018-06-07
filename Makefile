@@ -1,7 +1,7 @@
 .PHONY: all clean
 .PRECIOUS: %.ttl
 
-all: $(patsubst %.sparql,%.shex,$(wildcard *.sparql))
+all: $(patsubst %.sparql,%.html,$(wildcard *.sparql))
 
 %.ttl: %.sparql
 	curl --location http://wikiba.se/ontology-beta | rdfparse | sed 's|http://wikiba.se/ontology|&-beta|g' > $@
@@ -17,6 +17,9 @@ all: $(patsubst %.sparql,%.shex,$(wildcard *.sparql))
 
 %.shex: %-results
 	shexExporter/export.sh $< $@
+
+%.html: %.shex
+	{ printf '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n<title>%s</title>\n<script async src="https://lucaswerkmeister.de/annotate-wikidata-entity-ids-in-shex.js"></script>\n</head>\n<body>\n<pre id="shex">\n' $* && sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g;' $< && printf '</pre>\n</body>\n</html>\n'; } > $@
 
 clean:
 	$(RM) $(patsubst %.sparql,%.ttl,$(wildcard *.sparql))

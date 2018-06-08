@@ -37,27 +37,36 @@ function encodeMultiplicity(val)
   return "*";
 }
 
+const dataTypes = new Set();
+
+function collectDataTypes(object)
+{
+  if(typeof object !== 'object')
+    return;
+  if(object['@type'] === 'DataType')
+    dataTypes.add(object['@id']);
+  Object.values(object).forEach(collectDataTypes);
+}
+
 function encodeType(val)
 {
   typeComment = null;
-  if(val.indexOf("http://www.w3.org/2001/XMLSchema#") == 0)
-  {
-    return "xsd:" + val.substring("http://www.w3.org/2001/XMLSchema#".length); 
-  }
-  else if(val == "http://ssb.wur.nl/RDF2Graph/invalid")
+
+  if(val === "http://ssb.wur.nl/RDF2Graph/invalid")
   {
     typeComment = "ref to invalid type";
     return ".";
   }
-  else if(val == "http://ssb.wur.nl/RDF2Graph/externalref")
+
+  if(val == "http://ssb.wur.nl/RDF2Graph/externalref")
   {
     return ".";
   }
-  else if(val == "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString")
-  {
-    return "rdf:langString";
-  }
-  return "@" + formatIri(val);
+
+  if(dataTypes.has(val))
+    return formatIri(val);
+  else
+    return '@' + formatIri(val);
 }
 
 function formatComment()
@@ -142,6 +151,8 @@ function processResult(data)
     process.stdout.write(`PREFIX ${prefix}: <${namespace}>\n`);
   }
   process.stdout.write('\n');
+
+  collectDataTypes(data);
 
   const clazzes = data['class'];
   clazzes.sort(compareOn('@id'));

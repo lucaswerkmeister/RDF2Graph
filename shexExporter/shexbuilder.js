@@ -185,7 +185,7 @@ function processResult(data)
               process.stdout.write('\n');
               firstProp = false;
           } else {
-              process.stdout.write(',\n');
+              process.stdout.write(';\n');
           }
         if (typeLinksFormatted.length === 1) {
           process.stdout.write(`  ${typeLinksFormatted[0]}`);

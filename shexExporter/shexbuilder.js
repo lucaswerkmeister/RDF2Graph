@@ -12,9 +12,9 @@ const prefixes = {
   schema: 'http://schema.org/',
 };
 
-var lib = {};
+var multiplicityComment, typeComment;
 
-lib.to_array = function(val)
+function to_array(val)
 {
   if(val === undefined)
     return [];
@@ -22,9 +22,9 @@ lib.to_array = function(val)
   return res;
 };
 
-lib.encodeMultiplicity = function(val)
+function encodeMultiplicity(val)
 {
-  lib.mulTiplicityComment = null;
+  multiplicityComment = null;
   if(val == "http://open-services.net/ns/core#Exactly-one")
     return "";
   else if(val == "http://open-services.net/ns/core#One-or-many")
@@ -33,20 +33,20 @@ lib.encodeMultiplicity = function(val)
     return "*";
   else if(val == "http://open-services.net/ns/core#Zero-or-one")
     return "?";
-  lib.mulTiplicityComment = "No multiplicity defined defaulted to *";
+  multiplicityComment = "No multiplicity defined defaulted to *";
   return "*";
 }
 
-lib.encodeType = function(val)
+function encodeType(val)
 {
-  lib.typeComment = null;
+  typeComment = null;
   if(val.indexOf("http://www.w3.org/2001/XMLSchema#") == 0)
   {
     return "xsd:" + val.substring("http://www.w3.org/2001/XMLSchema#".length); 
   }
   else if(val == "http://ssb.wur.nl/RDF2Graph/invalid")
   {
-    lib.typeComment = "ref to invalid type";
+    typeComment = "ref to invalid type";
     return ".";
   }
   else if(val == "http://ssb.wur.nl/RDF2Graph/externalref")
@@ -60,21 +60,21 @@ lib.encodeType = function(val)
   return "@" + formatIri(val);
 }
 
-lib.comment = function()
+function formatComment()
 {
-  if(lib.mulTiplicityComment != null)
+  if(multiplicityComment != null)
   {
-    if(lib.typeComment != null)
-      return "#" + lib.mulTiplicityComment + " : " + lib.typeComment;
-    return "#" + lib.mulTiplicityComment;
+    if(typeComment != null)
+      return "#" + multiplicityComment + " : " + typeComment;
+    return "#" + multiplicityComment;
   }
-  else if(lib.typeComment != null)
-    return "#" + lib.typeComment;
+  else if(typeComment != null)
+    return "#" + typeComment;
   else
     return "";
 }
 
-lib.filterErrors = function(val)
+function filterErrors(val)
 {
   return val.filter(function(elem) { return !("error" in elem); });
 }
@@ -147,23 +147,23 @@ function processResult(data)
   clazzes.sort(compareOn('@id'));
   for (const clazz of clazzes) {
     if (clazz.subClassOf) {
-      process.stdout.write(`${formatIri(clazz['@id'])} & ${lib.to_array(clazz.subClassOf).map(formatIri).join()} {`);
+      process.stdout.write(`${formatIri(clazz['@id'])} & ${to_array(clazz.subClassOf).map(formatIri).join()} {`);
     } else {
       process.stdout.write(`${formatIri(clazz['@id'])} {`);
     }
-    const props = lib.to_array(clazz.property);
+    const props = to_array(clazz.property);
     props.sort(compareOn('rdfProperty', '@id'));
     let firstProp = true;
     for (const prop of props) {
-      let typeLinks = lib.to_array(prop.linkTo);
-      typeLinks = lib.filterErrors(typeLinks);
+      let typeLinks = to_array(prop.linkTo);
+      typeLinks = filterErrors(typeLinks);
       typeLinks.sort(compareOn('type', '@id'));
       const typeLinksFormatted = [];
       for (const typeLink of typeLinks) {
         const iri = formatIri(prop.rdfProperty['@id']),
-              type = lib.encodeType(typeLink.type['@id']),
-              multiplicity = lib.encodeMultiplicity(typeLink.forwardMultiplicity['@id']),
-              comment = lib.comment();
+              type = encodeType(typeLink.type['@id']),
+              multiplicity = encodeMultiplicity(typeLink.forwardMultiplicity['@id']),
+              comment = formatComment();
         let typeLinkFormatted = `${iri} ${type}${multiplicity}`;
         if (comment) {
           typeLinkFormatted += ` ${comment}`;

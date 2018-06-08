@@ -120,6 +120,22 @@ function formatIri(iri) {
   return '<' + iri + '>';
 }
 
+function compareOn(...properties) {
+  return (a, b) => {
+    for (const property of properties) {
+      a = a[property];
+      b = b[property];
+    }
+    if (a < b) {
+      return -1;
+    }
+    if (a > b) {
+      return 1;
+    }
+    return 0;
+  };
+}
+
 function processResult(data)
 {
   for (const [prefix, namespace] of Object.entries(prefixes)) {
@@ -127,17 +143,21 @@ function processResult(data)
   }
   process.stdout.write('\n');
 
-  for (const clazz of data['class']) {
+  const clazzes = data['class'];
+  clazzes.sort(compareOn('@id'));
+  for (const clazz of clazzes) {
     if (clazz.subClassOf) {
       process.stdout.write(`${formatIri(clazz['@id'])} & ${lib.to_array(clazz.subClassOf).map(formatIri).join()} {`);
     } else {
       process.stdout.write(`${formatIri(clazz['@id'])} {`);
     }
     const props = lib.to_array(clazz.property);
+    props.sort(compareOn('rdfProperty', '@id'));
     let firstProp = true;
     for (const prop of props) {
       let typeLinks = lib.to_array(prop.linkTo);
       typeLinks = lib.filterErrors(typeLinks);
+      typeLinks.sort(compareOn('type', '@id'));
       const typeLinksFormatted = [];
       for (const typeLink of typeLinks) {
         const iri = formatIri(prop.rdfProperty['@id']),

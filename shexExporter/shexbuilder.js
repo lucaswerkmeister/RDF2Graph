@@ -157,10 +157,9 @@ function processResult(data)
   const clazzes = data['class'];
   clazzes.sort(compareOn('@id'));
   for (const clazz of clazzes) {
+    process.stdout.write(`${formatIri(clazz['@id'])} {`);
     if (clazz.subClassOf) {
-      process.stdout.write(`${formatIri(clazz['@id'])} & ${to_array(clazz.subClassOf).map(formatIri).join()} {`);
-    } else {
-      process.stdout.write(`${formatIri(clazz['@id'])} {`);
+      process.stdout.write(` # & ${to_array(clazz.subClassOf).map(formatIri).join()}`);
     }
     const props = to_array(clazz.property);
     props.sort(compareOn('rdfProperty', '@id'));

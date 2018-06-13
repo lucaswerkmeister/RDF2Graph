@@ -1,5 +1,5 @@
 .PHONY: all clean
-.PRECIOUS: %.ttl
+.PRECIOUS: %.ttl %.nt %.shex %.html
 
 all: $(patsubst %.sparql,%.html,$(wildcard *.sparql))
 

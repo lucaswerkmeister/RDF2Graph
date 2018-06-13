@@ -3,9 +3,10 @@
 
 all: $(patsubst %.sparql,%.html,$(wildcard *.sparql))
 
-external-identifier-patterns:
+exclusion-patterns:
 	curl --get --header 'Accept: application/json' --data-urlencode 'query=SELECT ?id WHERE { ?id wikibase:propertyType wikibase:ExternalId. }' https://query.wikidata.org/sparql | \
 	jq --raw-output '.results.bindings | .[] | (.id.value[30:40] + ">")' > $@
+	printf '<%s>\n' >> $@ 'http://www.w3.org/2000/01/rdf-schema#label' 'http://www.w3.org/2004/02/skos/core#prefLabel' 'http://schema.org/name' 'http://schema.org/description' 'http://www.w3.org/2004/02/skos/core#altLabel'
 
 %.ttl: %.sparql
 	curl --location http://wikiba.se/ontology-beta | rdfparse | sed 's|http://wikiba.se/ontology|&-beta|g' > $@
@@ -13,8 +14,8 @@ external-identifier-patterns:
 	jq --raw-output '.results.bindings | .[] | .item.value' | \
 	xargs curl --silent --header 'Accept: text/turtle' --location -- >> $@
 
-%.nt: %.ttl external-identifier-patterns
-	ntriples $< | grep -vFf external-identifier-patterns > $@
+%.nt: %.ttl exclusion-patterns
+	ntriples $< | grep -vFf exclusion-patterns > $@
 
 %-results: %.nt
 	fuseki-server --file $< /$* & \

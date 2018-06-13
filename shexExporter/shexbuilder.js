@@ -41,7 +41,12 @@ function encodeMultiplicity(val)
   return "*";
 }
 
+// IRIs that are used as datatypes
 const dataTypes = new Set();
+// non-datatype IRIs that are used as types
+const usedTypes = new Set();
+// non-datatype IRIs that occurred as types, but were dropped from the ShEx output (see dropProp)
+const droppedTypes = new Set();
 
 function collectDataTypes(object)
 {
@@ -67,10 +72,12 @@ function encodeType(val)
     return ".";
   }
 
-  if(dataTypes.has(val))
+  if(dataTypes.has(val)) {
     return formatIri(val);
-  else
+  } else {
+    usedTypes.add(val);
     return '@' + formatIri(val);
+  }
 }
 
 function formatComment()
@@ -154,6 +161,9 @@ function compareOn(...properties) {
 function dropProp(typeLinks) {
   if (typeLinks.length > 10) {
     // so many different types are unlikely to result in a useful shape
+    for (const typeLink of typeLinks) {
+      droppedTypes.add(typeLink.type['@id']);
+    }
     return true;
   }
 
@@ -178,6 +188,65 @@ function dropProp(typeLinks) {
   return false;
 }
 
+function classToShape(clazz) {
+  let shape = '';
+
+  shape += `${formatIri(clazz['@id'])} {`;
+  if (clazz.subClassOf) {
+    shape += ` # & ${to_array(clazz.subClassOf).map(formatIri).join()}`;
+  }
+
+  const props = to_array(clazz.property);
+  props.sort(compareOn('rdfProperty', '@id'));
+  let firstProp = true;
+
+  for (const prop of props) {
+    let typeLinks = to_array(prop.linkTo);
+    typeLinks = filterErrors(typeLinks);
+    typeLinks.sort(compareOn('type', '@id'));
+    if (dropProp(typeLinks)) {
+      continue;
+    }
+
+    const typeLinksFormatted = [];
+    for (const typeLink of typeLinks) {
+      const iri = formatIri(prop.rdfProperty['@id']),
+            type = encodeType(typeLink.type['@id']),
+            multiplicity = encodeMultiplicity(typeLink.forwardMultiplicity['@id']),
+            comment = formatComment();
+      let typeLinkFormatted = `${iri} ${type}${multiplicity}`;
+      if (comment) {
+        typeLinkFormatted += ` ${comment}`;
+      }
+      typeLinksFormatted.push(typeLinkFormatted);
+    }
+
+    if (typeLinksFormatted.length) {
+      if (firstProp) {
+        shape += '\n';
+        firstProp = false;
+      } else {
+        shape += ';\n';
+      }
+      if (typeLinksFormatted.length === 1) {
+        shape += `  ${typeLinksFormatted[0]}`;
+      } else {
+        shape += `  (\n`;
+        const lastTypeLinkFormatted = typeLinksFormatted.pop();
+        for (const typeLinkFormatted of typeLinksFormatted) {
+          shape += `    ${typeLinkFormatted} |\n`;
+        }
+        shape += `    ${lastTypeLinkFormatted}\n`;
+        shape += `  )`;
+      }
+    }
+  }
+
+  shape += '\n}';
+
+  return shape;
+}
+
 function processResult(data)
 {
   for (const [prefix, namespace] of Object.entries(prefixes)) {
@@ -188,56 +257,28 @@ function processResult(data)
   collectDataTypes(data);
 
   const clazzes = data['class'];
-  clazzes.sort(compareOn('@id'));
+  const shapes = new Map();
   for (const clazz of clazzes) {
-    process.stdout.write(`${formatIri(clazz['@id'])} {`);
-    if (clazz.subClassOf) {
-      process.stdout.write(` # & ${to_array(clazz.subClassOf).map(formatIri).join()}`);
-    }
-    const props = to_array(clazz.property);
-    props.sort(compareOn('rdfProperty', '@id'));
-    let firstProp = true;
-    for (const prop of props) {
-      let typeLinks = to_array(prop.linkTo);
-      typeLinks = filterErrors(typeLinks);
-      typeLinks.sort(compareOn('type', '@id'));
-      if (dropProp(typeLinks)) {
-        continue;
-      }
-      const typeLinksFormatted = [];
-      for (const typeLink of typeLinks) {
-        const iri = formatIri(prop.rdfProperty['@id']),
-              type = encodeType(typeLink.type['@id']),
-              multiplicity = encodeMultiplicity(typeLink.forwardMultiplicity['@id']),
-              comment = formatComment();
-        let typeLinkFormatted = `${iri} ${type}${multiplicity}`;
-        if (comment) {
-          typeLinkFormatted += ` ${comment}`;
-        }
-        typeLinksFormatted.push(typeLinkFormatted);
-      }
-      if (typeLinksFormatted.length) {
-          if (firstProp) {
-              process.stdout.write('\n');
-              firstProp = false;
-          } else {
-              process.stdout.write(';\n');
-          }
-        if (typeLinksFormatted.length === 1) {
-          process.stdout.write(`  ${typeLinksFormatted[0]}`);
-        } else {
-          process.stdout.write(`  (\n`);
-          const lastTypeLinkFormatted = typeLinksFormatted.pop();
-          for (const typeLinkFormatted of typeLinksFormatted) {
-            process.stdout.write(`    ${typeLinkFormatted} |\n`);
-          }
-          process.stdout.write(`    ${lastTypeLinkFormatted}\n`);
-          process.stdout.write(`  )`);
-        }
-      }
-    }
-    process.stdout.write('\n}\n\n');
+    shapes.set(clazz['@id'], classToShape(clazz));
   }
+
+  for (const droppedType of droppedTypes) {
+    if (!usedTypes.has(droppedType)) {
+      shapes.delete(droppedType);
+    }
+  }
+
+  let firstShape = true;
+  for (const shape of Array.from(shapes.entries()).sort(compareOn('0'))) {
+    if (firstShape) {
+      firstShape = false;
+    } else {
+      process.stdout.write('\n\n');
+    }
+
+    process.stdout.write(shape[1]);
+  }
+  process.stdout.write('\n');
 }
 
 loadJSON_ld("temp/result.json",  function (err, data) {

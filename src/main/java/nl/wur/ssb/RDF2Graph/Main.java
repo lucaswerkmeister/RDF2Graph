@@ -181,6 +181,8 @@ public class Main
 		excludeProps.add(localStore.expand("rdf:predicate"));
 		excludeProps.add(localStore.expand("rdf:subject"));
 		excludeProps.add(localStore.expand("rdf:value"));
+		excludeProps.add("http://www.wikidata.org/prop/direct/P31");
+		excludeProps.add("http://www.wikidata.org/prop/direct/P279");
 
 		this.status = new StatusSystem(this.localStore);
 		this.status.init();

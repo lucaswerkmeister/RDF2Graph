@@ -149,6 +149,35 @@ function compareOn(...properties) {
   };
 }
 
+// in some cases, the ShEx we produce for a certain predicate is unnecessary;
+// since we do not produce CLOSED shapes, we can drop those predicates
+function dropProp(typeLinks) {
+  if (typeLinks.length > 10) {
+    // so many different types are unlikely to result in a useful shape
+    return true;
+  }
+
+  if (typeLinks.length === 1) {
+    const typeLink = typeLinks[0];
+
+    if (typeLink.forwardMultiplicity['@id'] === 'http://open-services.net/ns/core#Zero-or-many') {
+      // the multiplicity ('*') carries no information
+
+      if (typeLink.type['@id'] === 'http://ssb.wur.nl/RDF2Graph/externalref') {
+        // the IRI is "any", so it carries no information either
+        return true;
+      }
+
+      if (dataTypes.has(typeLink.type['@id'])) {
+        // datatypes are enforced by Wikibase, no need to include it in the shape
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 function processResult(data)
 {
   for (const [prefix, namespace] of Object.entries(prefixes)) {
@@ -172,6 +201,9 @@ function processResult(data)
       let typeLinks = to_array(prop.linkTo);
       typeLinks = filterErrors(typeLinks);
       typeLinks.sort(compareOn('type', '@id'));
+      if (dropProp(typeLinks)) {
+        continue;
+      }
       const typeLinksFormatted = [];
       for (const typeLink of typeLinks) {
         const iri = formatIri(prop.rdfProperty['@id']),

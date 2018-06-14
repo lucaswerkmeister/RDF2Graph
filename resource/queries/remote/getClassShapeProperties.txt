@@ -1,13 +1,10 @@
-SELECT DISTINCT ?pred
+SELECT ?pred
 FROM <%2$s>
 WHERE
 {
-  {
-    SELECT ?pred
-    {
-      ?subj wdt:P31 <%1$s> .
-      ?subj ?pred ?target .
-    }
-    LIMIT 1000000
-  }
+  { SELECT (COUNT(?subj) AS ?totalCount) WHERE { ?subj wdt:P31 <%1$s> . } }
+  ?subj wdt:P31 <%1$s> .
+  ?subj ?pred ?target .
 }
+GROUP BY ?pred ?totalCount
+HAVING(COUNT(DISTINCT ?subj) >= ?totalCount/10)

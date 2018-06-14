@@ -1,7 +1,10 @@
-SELECT DISTINCT ?type ?pred
+SELECT ?type ?pred
 FROM <%1$s>
 WHERE
 {
+  { SELECT ?type (COUNT(?subj) AS ?totalCount) WHERE { ?subj wdt:P31 ?type . } GROUP BY ?type }
   ?subj wdt:P31 ?type .
   ?subj ?pred ?target .
 }
+GROUP BY ?type ?pred ?totalCount
+HAVING(COUNT(DISTINCT ?subj) >= ?totalCount/10)

@@ -242,6 +242,11 @@ function classToShape(clazz) {
     }
   }
 
+  if (firstProp) {
+    // empty shape, drop it if nothing else refers to it
+    droppedTypes.add(clazz['@id']);
+  }
+
   shape += '\n}';
 
   return shape;

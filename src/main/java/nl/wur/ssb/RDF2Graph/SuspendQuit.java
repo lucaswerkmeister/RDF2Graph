@@ -18,25 +18,25 @@ public class SuspendQuit implements Runnable
 	{
 		try
 		{
-		  BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		  while(!this.isQuited)
-		  {
-		  	while(!br.ready())
-		  	{
-		  		if(this.isQuited)
-		  			return;
-		  		Thread.sleep(200);
-		  	}
-		    if(br.readLine().equals("q"))
-		    {
-		  	  this.isQuited = true;
-		  	  System.out.println("will stop at next checkpoint");	
-		    }
-		    if(thread.isInterrupted())
-		    {
-		  	  this.isQuited = true;
-		    }
-		  }
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			while(!this.isQuited)
+			{
+				while(!br.ready())
+				{
+					if(this.isQuited)
+						return;
+					Thread.sleep(200);
+				}
+				if(br.readLine().equals("q"))
+				{
+					this.isQuited = true;
+					System.out.println("will stop at next checkpoint");
+				}
+				if(thread.isInterrupted())
+				{
+					this.isQuited = true;
+				}
+			}
 		}
 		catch(IOException ieo)
 		{
@@ -44,7 +44,7 @@ public class SuspendQuit implements Runnable
 		}
 		catch(InterruptedException e)
 		{
-		  this.isQuited = true;
+			this.isQuited = true;
 		}
 	}
 	public void checkquit() throws QuitException
@@ -54,9 +54,9 @@ public class SuspendQuit implements Runnable
 	}
 	public void quit()
 	{
-	  this.isQuited = true;
-	  this.thread.interrupt();
-	  try
+		this.isQuited = true;
+		this.thread.interrupt();
+		try
 		{
 			System.in.close();
 		}

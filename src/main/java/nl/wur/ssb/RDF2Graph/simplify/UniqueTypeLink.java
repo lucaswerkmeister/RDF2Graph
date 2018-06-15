@@ -4,21 +4,21 @@ public class UniqueTypeLink
 {
 	public String typeName;
 	public int count;
-  public int forwardMinMultiplicity;
-  public int forwardMaxMultiplicity;
-  public int reverseMinMultiplicity;
-  public int reverseMaxMultiplicity;
-	
+	public int forwardMinMultiplicity;
+	public int forwardMaxMultiplicity;
+	public int reverseMinMultiplicity;
+	public int reverseMaxMultiplicity;
+
 	public UniqueTypeLink(String destName,int count,int forwardMinMultiplicity,int forwardMaxMultiplicity,int reverseMinMultiplicity,int reverseMaxMultiplicity)
 	{
 		this.typeName = destName;
-	  this.count = count;
-	  this.forwardMinMultiplicity = forwardMinMultiplicity;
-	  this.forwardMaxMultiplicity = forwardMaxMultiplicity;
-	  this.reverseMinMultiplicity = reverseMinMultiplicity;
-	  this.reverseMaxMultiplicity = reverseMaxMultiplicity;
+		this.count = count;
+		this.forwardMinMultiplicity = forwardMinMultiplicity;
+		this.forwardMaxMultiplicity = forwardMaxMultiplicity;
+		this.reverseMinMultiplicity = reverseMinMultiplicity;
+		this.reverseMaxMultiplicity = reverseMaxMultiplicity;
 	}
-	
+
 	public void combineWith(UniqueTypeLink other,String newDestName)
 	{
 		this.typeName = newDestName;

@@ -13,7 +13,7 @@ public class StatusSystem
 	{
 		this.graph.add("RDF2Graph:status","rdf:type","RDF2Graph:Status");
 	}
-	
+
 	public boolean stepDone(String step)
 	{
 		return this.graph.containsLit("RDF2Graph:status","RDF2Graph:stepDone",step);
@@ -30,12 +30,12 @@ public class StatusSystem
 	{
 		this.graph.addLit(clazz,"RDF2Graph:stepDone",step);
 	}
-	
+
 	public void setPredAsClassDetected()
 	{
 		this.graph.add("RDF2Graph:status","RDF2Graph:predicateAsClassDetected",true);
 	}
-	
+
 	public boolean hasPredAsClassDetected()
 	{
 		return this.graph.contains("RDF2Graph:status","RDF2Graph:predicateAsClassDetected");

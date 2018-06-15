@@ -20,7 +20,7 @@ exclusion-patterns:
 %-results: %.nt
 	fuseki-server --file $< /$* & \
 	bash -c 'while ! exec 3</dev/tcp/localhost/3030; do sleep 5s; done' 2>/dev/null ; \
-	java -jar RDF2Graph.jar $@ http://localhost:3030/$*/query --all ; \
+	java -jar RDF2Graph.jar $@ http://localhost:3030/$*/query --all --executeSimplify --useClassPropertyRecoveryPerClass --remoteGraphFull https://query.wikidata.org/sparql ; \
 	kill %1
 
 %.shex: %-results

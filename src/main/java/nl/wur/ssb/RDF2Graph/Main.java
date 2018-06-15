@@ -36,6 +36,7 @@ public class Main
 	private StatusSystem status;
 	private RDFSimpleCon remoteGraph1;
 	private RDFSimpleCon remoteGraph2;
+	private RDFSimpleCon remoteGraphFull;
 	private RDFSimpleCon localStore;
 	private String project;
 	private TaskExecuter executer;
@@ -65,7 +66,7 @@ public class Main
 		if(args.length >= 2)
 		{
 			main.project = args[0];
-			main.remoteGraph1 = main.remoteGraph2 = new RDFSimpleCon(args[1]);
+			main.remoteGraph1 = main.remoteGraph2 = main.remoteGraphFull = new RDFSimpleCon(args[1]);
 			if(args.length >= 3 && args[2].equals("+"))
 			{
 				main.remoteGraph2 = new RDFSimpleCon(args[3]);
@@ -122,6 +123,10 @@ public class Main
 					{
 						ok = false;
 					}
+				}
+				else if(enProp.equals("remoteGraphFull"))
+				{
+					main.remoteGraphFull = new RDFSimpleCon(args[++i]);
 				}
 				else
 				{
@@ -297,7 +302,7 @@ public class Main
 				System.out.println("Loading all subClass of relationships");
 				this.executer.runEachAsTask(this.runLocalQuery(localStore,true,"getFoundClasses.txt"),(ResultHandler)(ResultLine item,int index) -> {
 						String clazz = item.getIRI("class");
-						for(ResultLine subClassItem : this.runRemoteQuery(remoteGraph1,"getAllSubClassOfClass.txt",clazz))
+						for(ResultLine subClassItem : this.runRemoteQuery(remoteGraphFull,"getAllSubClassOfClass.txt",clazz))
 						{
 							String child = subClassItem.getIRI("child");
 							String parent = subClassItem.getIRI("parent");

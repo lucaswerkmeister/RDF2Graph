@@ -1,0 +1,9 @@
+SELECT ?child ?parent
+FROM <%2$s>
+WHERE
+{
+  { ?parent wdt:P279* <%1$s>. } UNION { <%1$s> wdt:P279* ?child. }
+  ?child wdt:P279 ?parent .
+  FILTER(!isBlank(?parent))
+  FILTER(!isBlank(?child))
+}

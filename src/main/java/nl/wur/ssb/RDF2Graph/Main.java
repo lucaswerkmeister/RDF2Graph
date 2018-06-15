@@ -295,13 +295,16 @@ public class Main
 
 				//6. Get all the subClass of references into our database
 				System.out.println("Loading all subClass of relationships");
-				for(ResultLine item : this.runRemoteQuery(remoteGraph1,"getAllSubClassOf.txt"))
-				{
-					String child = item.getIRI("child");
-					String parent = item.getIRI("parent");
-					//System.out.println("class structure:" + parent + " -> " + child);
-					localStore.add(child,"rdfs:subClassOf",parent);
-				}
+				this.executer.runEachAsTask(this.runLocalQuery(localStore,true,"getFoundClasses.txt"),(ResultHandler)(ResultLine item,int index) -> {
+						String clazz = item.getIRI("class");
+						for(ResultLine subClassItem : this.runRemoteQuery(remoteGraph1,"getAllSubClassOfClass.txt",clazz))
+						{
+							String child = subClassItem.getIRI("child");
+							String parent = subClassItem.getIRI("parent");
+							//System.out.println("class structure: " + parent + " -> " + child);
+							localStore.add(child,"rdfs:subClassOf",parent);
+						}
+					});
 				System.out.println("Loaded: all subClass of relationships");
 				status.setStepDone("recoveryDone");
 			}

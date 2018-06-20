@@ -1,21 +1,13 @@
 .PHONY: all clean
-.PRECIOUS: %.ttl %.nt %-results %.shex %.html
+.PRECIOUS: %.nt %-results %.shex %.html
 
-all: $(patsubst %.sparql,%.html,$(wildcard *.sparql))
+all: $(patsubst %.entities.sparql,%.html,$(wildcard *.entities.sparql))
 
-exclusion-patterns:
-	curl --get --header 'Accept: application/json' --data-urlencode 'query=SELECT ?id WHERE { ?id wikibase:propertyType wikibase:ExternalId. }' https://query.wikidata.org/sparql | \
-	jq --raw-output '.results.bindings | .[] | (.id.value[30:40] + ">")' > $@
-	printf '<%s>\n' >> $@ 'http://www.w3.org/2000/01/rdf-schema#label' 'http://www.w3.org/2004/02/skos/core#prefLabel' 'http://schema.org/name' 'http://schema.org/description' 'http://www.w3.org/2004/02/skos/core#altLabel'
+%.data.sparql: %.entities.sparql data.sparql.template
+	sed $$'/%ENTITIES%/ {\n  r $<\n  d\n}' < data.sparql.template > $@
 
-%.ttl: %.sparql
-	curl --location http://wikiba.se/ontology-beta | rdfparse | sed 's|http://wikiba.se/ontology|&-beta|g' > $@
-	curl --get --header 'Accept: application/json' --data-urlencode "query=$$(cat $<)" https://query.wikidata.org/sparql | \
-	jq --raw-output '.results.bindings | .[] | .item.value' | \
-	xargs curl --silent --header 'Accept: text/turtle' --location -- >> $@
-
-%.nt: %.ttl exclusion-patterns
-	ntriples $< | grep -vFf exclusion-patterns > $@
+%.nt: %.data.sparql data.nt.jq
+	curl --get --header 'Accept: application/json' --data-urlencode "query=$$(<$<)" https://query.wikidata.org/sparql | ./data.nt.jq --raw-output > $@
 
 %-results: %.nt
 	fuseki-server --file $< /$* & \

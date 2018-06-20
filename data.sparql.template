@@ -1,0 +1,31 @@
+SELECT ?subject ?predicate ?object
+WITH {
+%ENTITIES%
+} AS %entities
+WITH {
+  SELECT (?entity AS ?subject) (?wdt AS ?predicate) ?object WHERE {
+    INCLUDE %entities.
+    ?property a wikibase:Property;
+              wikibase:directClaim ?wdt.
+    MINUS { ?property wikibase:propertyType wikibase:ExternalId. }
+    ?entity ?wdt ?object.
+  }
+} AS %directStatements
+WITH {
+  SELECT ?subject (?wdt AS ?predicate) ?object WHERE {
+  INCLUDE %entities.
+    ?property a wikibase:Property;
+              wikibase:directClaim ?wdt.
+    MINUS { ?property wikibase:propertyType wikibase:ExternalId. }
+    ?itemProperty a wikibase:Property;
+                  wikibase:propertyType wikibase:WikibaseItem;
+                  wikibase:directClaim ?itemWdt.
+    ?entity ?itemWdt ?subject.
+    ?subject ?wdt ?object.
+  }
+} AS %indirectStatements
+WHERE {
+  { INCLUDE %directStatements. }
+  UNION
+  { INCLUDE %indirectStatements. }
+}

@@ -14,9 +14,8 @@
 /RDFSimpleCon
 RDF2Graph.jar
 
-/external-identifier-patterns
 /*-results/
-/*.ttl
+/*.data.sparql
 /*.nt
 /*.shex
 /*.html

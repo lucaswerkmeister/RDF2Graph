@@ -99,6 +99,15 @@ function filterErrors(val)
   return val.filter(function(elem) { return !("error" in elem); });
 }
 
+function filterExternalReferences(typeLinks)
+{
+  if (typeLinks.length <= 1)
+    return typeLinks;
+  return typeLinks.filter(function (typeLink) {
+    return typeLink.type['@id'] !== 'http://ssb.wur.nl/RDF2Graph/externalref';
+  });
+}
+
 function objectifyJSONLD(input,callback)
 { 
   jsonld.objectify(input['@graph'], input['@context'], {expandContext:input['@context']},
@@ -203,6 +212,7 @@ function classToShape(clazz) {
   for (const prop of props) {
     let typeLinks = to_array(prop.linkTo);
     typeLinks = filterErrors(typeLinks);
+    typeLinks = filterExternalReferences(typeLinks);
     typeLinks.sort(compareOn('type', '@id'));
     if (dropProp(typeLinks)) {
       continue;

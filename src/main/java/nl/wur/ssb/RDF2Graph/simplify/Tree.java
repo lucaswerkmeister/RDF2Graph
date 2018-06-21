@@ -99,6 +99,16 @@ public class Tree
 		TreeNode treeNode2 = this.getNode(type2);
 		if(treeNode1 == null || treeNode2 == null)
 			return null;
+		// WIP: much simpler version:
+		// only consider types shared if one is a subtype of the other,
+		// ignore common supertypes.
+		// intended to be more appropriate for deeper or messier hierarchies
+		if (treeNode1.hasParent(treeNode2))
+			return treeNode2.name;
+		if (treeNode2.hasParent(treeNode1))
+			return treeNode1.name;
+		if (true) // without this condition, javac complains about unreachable code below
+			return null;
 		//reset the state
 		for(TreeNode node : this.allNodes)
 		{

@@ -41,7 +41,9 @@ public class Tree
 
 	public void simplifyStep4()
 	{
-		this.root.simplifyStep4(new HashSet<UniqueTypeLink>());
+		// disabled because ShEx has no special support for subclasses
+		// TODO instead of killing this step, resurrect the removed links in the ShEx exporter?
+		//this.root.simplifyStep4(new HashSet<UniqueTypeLink>());
 	}
 
 	public TreeNode getNode(String node)

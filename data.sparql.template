@@ -12,15 +12,20 @@ WITH {
   }
 } AS %directStatements
 WITH {
-  SELECT ?subject (?wdt AS ?predicate) ?object WHERE {
-  INCLUDE %entities.
-    ?property a wikibase:Property;
-              wikibase:directClaim ?wdt.
-    MINUS { ?property wikibase:propertyType wikibase:ExternalId. }
+  SELECT DISTINCT ?subject WHERE {
+    INCLUDE %entities.
     ?itemProperty a wikibase:Property;
                   wikibase:propertyType wikibase:WikibaseItem;
                   wikibase:directClaim ?itemWdt.
     ?entity ?itemWdt ?subject.
+  }
+} AS %indirectEntities
+WITH {
+  SELECT ?subject (?wdt AS ?predicate) ?object WHERE {
+    INCLUDE %indirectEntities.
+    ?property a wikibase:Property;
+              wikibase:directClaim ?wdt.
+    MINUS { ?property wikibase:propertyType wikibase:ExternalId. }
     ?subject ?wdt ?object.
   }
 } AS %indirectStatements

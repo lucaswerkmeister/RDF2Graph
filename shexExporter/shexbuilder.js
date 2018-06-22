@@ -202,7 +202,9 @@ function classToShape(clazz) {
 
   shape += `${formatIri(clazz['@id'])} {`;
   if (clazz.subClassOf) {
-    shape += ` # & ${to_array(clazz.subClassOf).map(formatIri).join()}`;
+    const superClasses = to_array(clazz.subClassOf);
+    shape += ` # & ${superClasses.map(formatIri).join()}`;
+    superClasses.forEach(droppedTypes.add.bind(droppedTypes));
   }
 
   const props = to_array(clazz.property);

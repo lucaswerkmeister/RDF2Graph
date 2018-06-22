@@ -19,7 +19,7 @@ all: $(patsubst %.entities.sparql,%.html,$(wildcard *.entities.sparql))
 	shexExporter/export.sh $< $@
 
 %.html: %.shex
-	{ printf '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n<title>%s</title>\n<script async src="https://lucaswerkmeister.de/annotate-wikidata-entity-ids-in-shex.js"></script>\n</head>\n<body>\n<pre id="shex">\n' $* && sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g;' $< && printf '</pre>\n</body>\n</html>\n'; } > $@
+	{ printf '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n<title>%s</title>\n<script async src="https://lucaswerkmeister.de/annotate-wikidata-entity-ids-in-shex.js"></script>\n<link rel="stylesheet" href="https://rawgit.com/richleland/pygments-css/master/default.css">\n</head>\n<body>\n<pre id="shex">\n' $* && pygmentize -f html $< && printf '</pre>\n</body>\n</html>\n'; } > $@
 
 clean:
 	$(RM) $(patsubst %.sparql,%.ttl,$(wildcard *.sparql))

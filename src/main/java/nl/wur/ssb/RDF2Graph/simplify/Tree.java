@@ -83,9 +83,23 @@ public class Tree
 			node.setRootIfNoParents(root);
 		}
 		this.allNodes.add(this.root);
-		TreeNode classNode = this.nodes.get("http://www.w3.org/2002/07/owl#Thing");
-		if(classNode != null) //TODO not for rdfs schema properties
-			classNode.behaveAsRoot();
+		String[] rootClasses = new String[] {
+			"http://www.w3.org/2002/07/owl#Thing",
+			"http://www.wikidata.org/entity/Q35120",
+			"http://www.wikidata.org/entity/Q58778",
+			"http://www.wikidata.org/entity/Q151885",
+			"http://www.wikidata.org/entity/Q223557",
+			"http://www.wikidata.org/entity/Q618123",
+			"http://www.wikidata.org/entity/Q4406616",
+			"http://www.wikidata.org/entity/Q7184903",
+			"http://www.wikidata.org/entity/Q6671777",
+			"http://www.wikidata.org/entity/Q17553950",
+		};
+		for (String rootClass : rootClasses) {
+			TreeNode classNode = this.nodes.get(rootClass);
+			if(classNode != null) //TODO not for rdfs schema properties
+				classNode.behaveAsRoot();
+		}
 	}
 
 	public void calculateSubClassOfIntanceOfCount()
@@ -100,16 +114,6 @@ public class Tree
 		TreeNode treeNode1 = this.getNode(type1);
 		TreeNode treeNode2 = this.getNode(type2);
 		if(treeNode1 == null || treeNode2 == null)
-			return null;
-		// WIP: much simpler version:
-		// only consider types shared if one is a subtype of the other,
-		// ignore common supertypes.
-		// intended to be more appropriate for deeper or messier hierarchies
-		if (treeNode1.hasParent(treeNode2))
-			return treeNode2.name;
-		if (treeNode2.hasParent(treeNode1))
-			return treeNode1.name;
-		if (true) // without this condition, javac complains about unreachable code below
 			return null;
 		//reset the state
 		for(TreeNode node : this.allNodes)

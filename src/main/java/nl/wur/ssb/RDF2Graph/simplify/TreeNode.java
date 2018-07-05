@@ -239,7 +239,7 @@ public class TreeNode
 	//Search for the hihgest possible common ancestor
 	TreeNode findCommon()
 	{
-		int max = Integer.MAX_VALUE;
+		int max = 5; // TODO make configurable?
 		TreeNode best = null;
 		LinkedList<TreeNode> temp = new LinkedList<TreeNode>();
 		temp.addAll(this.parents);

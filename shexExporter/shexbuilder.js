@@ -165,6 +165,20 @@ function compareOn(...properties) {
   };
 }
 
+function totalCount(clazz) {
+  let count = 0;
+
+  if ('count' in clazz) {
+    count += clazz['count']['@value'];
+  }
+
+  if ('subClassOfInstanceCount' in clazz) {
+    count += clazz['subClassOfInstanceCount']['@value'];
+  }
+
+  return count;
+}
+
 // in some cases, the ShEx we produce for a certain predicate is unnecessary;
 // since we do not produce CLOSED shapes, we can drop those predicates
 function dropProp(typeLinks) {
@@ -210,6 +224,12 @@ function classToShape(clazz) {
   const props = to_array(clazz.property);
   props.sort(compareOn('rdfProperty', '@id'));
   let firstProp = true;
+
+  const count = totalCount(clazz);
+  if (count <= 5) { // TODO tweak limit
+    // clear properties as optimization
+    props.length = 0;
+  }
 
   for (const prop of props) {
     let typeLinks = to_array(prop.linkTo);

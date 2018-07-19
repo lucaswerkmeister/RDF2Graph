@@ -169,11 +169,11 @@ function totalCount(clazz) {
   let count = 0;
 
   if ('count' in clazz) {
-    count += clazz['count']['@value'];
+    count += +clazz['count']['@value'];
   }
 
   if ('subClassOfInstanceCount' in clazz) {
-    count += clazz['subClassOfInstanceCount']['@value'];
+    count += +clazz['subClassOfInstanceCount']['@value'];
   }
 
   return count;

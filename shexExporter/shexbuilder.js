@@ -4,6 +4,11 @@
 var fs = require('fs');
 var jsonld = require('./jsonld.js') 
 
+// TODO all three limits need tweaking and might make more sense as ratios than as absolute numbers
+const LIMIT_INSTANCES_PER_CLASS = 0,
+      LIMIT_INSTANCES_PER_PREDICATE = 0,
+      LIMIT_INSTANCES_PER_TYPE_LINK = 0;
+
 const prefixes = {
   xsd: 'http://www.w3.org/2001/XMLSchema#',
   rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -179,11 +184,29 @@ function totalCount(clazz) {
   return count;
 }
 
+function dropTypeLink(typeLink) {
+  if (totalCount(typeLink) <= LIMIT_INSTANCES_PER_TYPE_LINK) {
+    // this type link occurs rarely, drop it for efficiency
+    droppedTypes.add(typeLink.type['@id']);
+    return true;
+  }
+
+  return false;
+}
+
 // in some cases, the ShEx we produce for a certain predicate is unnecessary;
 // since we do not produce CLOSED shapes, we can drop those predicates
 function dropProp(typeLinks) {
   if (typeLinks.length > 10) {
     // so many different types are unlikely to result in a useful shape
+    for (const typeLink of typeLinks) {
+      droppedTypes.add(typeLink.type['@id']);
+    }
+    return true;
+  }
+
+  if (typeLinks.reduce((count, typeLink) => count + totalCount(typeLink), 0) <= LIMIT_INSTANCES_PER_PREDICATE) {
+    // this predicate is rarely used, drop it for efficiency
     for (const typeLink of typeLinks) {
       droppedTypes.add(typeLink.type['@id']);
     }
@@ -226,7 +249,7 @@ function classToShape(clazz) {
   let firstProp = true;
 
   const count = totalCount(clazz);
-  if (count <= 5) { // TODO tweak limit
+  if (count <= LIMIT_INSTANCES_PER_CLASS) {
     // clear properties as optimization
     props.length = 0;
   }
@@ -235,6 +258,7 @@ function classToShape(clazz) {
     let typeLinks = to_array(prop.linkTo);
     typeLinks = filterErrors(typeLinks);
     typeLinks = filterExternalReferences(typeLinks);
+    typeLinks = typeLinks.filter(typeLink => !dropTypeLink(typeLink));
     typeLinks.sort(compareOn('type', '@id'));
     if (dropProp(typeLinks)) {
       continue;

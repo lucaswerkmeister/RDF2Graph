@@ -1,6 +1,8 @@
 .PHONY: all clean
 .PRECIOUS: %.nt %-results %.shex %.html
 
+SHELL := /bin/bash
+
 all: $(patsubst %.entities.sparql,%.html,$(wildcard *.entities.sparql))
 
 %.data.sparql: %.entities.sparql data.sparql.template

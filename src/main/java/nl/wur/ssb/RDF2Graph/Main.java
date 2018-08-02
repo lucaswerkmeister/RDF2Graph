@@ -243,10 +243,12 @@ public class Main
 				//Those subjects are not reported in the reconstructed structure of the document
 				if(checkPredicateSourceClass)
 				{
-					this.executer.runEachAsTask(this.runLocalQuery(localStore,true,"getPredicates.txt"),(ResultHandler)(ResultLine item,int index) -> {
+					this.executer.runEachAsTask(this.runLocalQuery(localStore,true,"getPredicates.txt"),new ResultHandler() {
+						@Override
+						public void handleResult(ResultLine item,int index) throws Exception {
 							String pred = item.getIRI("pred");
 							System.out.println("find and count number of subjects that have no rdf:type defined that are using the predicate: " + pred);
-							for (ResultLine item2 : this.runRemoteQuery(remoteGraph1,"testSourceTypesForPredicate.txt",pred))
+							for (ResultLine item2 : runRemoteQuery(remoteGraph1,"testSourceTypesForPredicate.txt",pred))
 							{
 								int count = item2.getLitInt("count");
 								System.out.println("count = " + count);
@@ -259,7 +261,8 @@ public class Main
 									localStore.add(errorObj,"RDF2Graph:count",count);
 								}
 							}
-						});
+						}
+					});
 				}
 				this.executer.finishAllFirst();
 
@@ -275,41 +278,50 @@ public class Main
 				}
 
 				//5. get additional data for all the classes found in the database
-				this.executer.runEachAsTask(this.runLocalQuery(localStore,true,"getFoundClasses.txt"),(ResultHandler)(ResultLine item,int index) -> {
+				this.executer.runEachAsTask(this.runLocalQuery(localStore,true,"getFoundClasses.txt"),new ResultHandler() {
+					@Override
+					public void handleResult(ResultLine item,int index) throws Exception {
 						String clazz = item.getIRI("class");
 						reconstructClass(clazz);
-					});
+					}
+				});
 
 				if(!useClassPropertyRecoveryPerClass)
 				{
 					// * 5.2 collect for the specific class used predicate
 					// Get for this class all the outward going predicates (aka classProperty)
 					System.out.println("get properties for all classes ");
-					this.executer.runEachAsTask (this.runRemoteQuery(remoteGraph1,"getClassAllShapeProperties.txt"),(ResultHandler)(ResultLine item,int index) -> {
+					this.executer.runEachAsTask (this.runRemoteQuery(remoteGraph1,"getClassAllShapeProperties.txt"),new ResultHandler() {
+						@Override
+						public void handleResult(ResultLine item,int index) throws Exception {
 							String clazz = item.getIRI("type");
 							String pred = item.getIRI("pred");
-							if (this.filterPredicate(pred))
+							if (filterPredicate(pred))
 							{
 								return;
 							}
 							reconstructClassProperty(clazz,pred);
-						});
+						}
+					});
 				}
 
 				this.executer.finishAllFirst();
 
 				//6. Get all the subClass of references into our database
 				System.out.println("Loading all subClass of relationships");
-				this.executer.runEachAsTask(this.runLocalQuery(localStore,true,"getFoundClasses.txt"),(ResultHandler)(ResultLine item,int index) -> {
+				this.executer.runEachAsTask(this.runLocalQuery(localStore,true,"getFoundClasses.txt"),new ResultHandler() {
+					@Override
+					public void handleResult(ResultLine item,int index) throws Exception {
 						String clazz = item.getIRI("class");
-						for(ResultLine subClassItem : this.runRemoteQuery(remoteGraphFull,"getAllSubClassOfClass.txt",clazz))
+						for(ResultLine subClassItem : runRemoteQuery(remoteGraphFull,"getAllSubClassOfClass.txt",clazz))
 						{
 							String child = subClassItem.getIRI("child");
 							String parent = subClassItem.getIRI("parent");
 							//System.out.println("class structure: " + parent + " -> " + child);
 							localStore.add(child,"rdfs:subClassOf",parent);
 						}
-					});
+					}
+				});
 				System.out.println("Loaded: all subClass of relationships");
 				status.setStepDone("recoveryDone");
 			}
@@ -400,7 +412,7 @@ public class Main
 		this.localStore.add("RDF2Graph:Error","rdf:type","owl:Class");
 	}
 
-	private void reconstructClass(String clazz) throws Exception
+	private void reconstructClass(final String clazz) throws Exception
 	{
 		// 5.1 count the amount of instances that a present in the database for this class type
 		if(this.collectClassStatistics && !localStore.contains(clazz,"RDF2Graph:count"))
@@ -432,14 +444,17 @@ public class Main
 			// * 5.2 collect for the specific class used predicate
 			// Get for this class all the outward going predicates (aka classProperty)
 			System.out.println("get properties for class " + clazz);
-			this.executer.runEachAsTask (this.runRemoteQuery(remoteGraph1,"getClassShapeProperties.txt",clazz),(ResultHandler)(ResultLine item,int index) -> {
+			this.executer.runEachAsTask (this.runRemoteQuery(remoteGraph1,"getClassShapeProperties.txt",clazz),new ResultHandler() {
+				@Override
+				public void handleResult(ResultLine item,int index) throws Exception {
 					String pred = item.getIRI("pred");
-					if (this.filterPredicate(pred))
+					if (filterPredicate(pred))
 					{
 						return;
 					}
 					reconstructClassProperty(clazz,pred);
-				});
+				}
+			});
 		}
 	}
 
@@ -498,15 +513,17 @@ public class Main
 		return errorObj;
 	}
 
-	private void reconstructClassProperty(String clazz,String predicate) throws Exception
+	private void reconstructClassProperty(final String clazz,final String predicate) throws Exception
 	{
 		System.out.println("Found property: " + predicate + " for shape: " + clazz);
 		//Create the classproperty
-		String classProperty = createClassProperty(clazz,predicate,"");
+		final String classProperty = createClassProperty(clazz,predicate,"");
 
 		// * 5.3.1 get for each class/prop combi the types it references
 		// Each type that is referenced generates one seperate shape property
-		int resCount = this.executer.runEachAsTask(this.runRemoteQuery(remoteGraph1,"getClassPropertyDetails.txt",clazz,predicate),(ResultHandler)(ResultLine item,int count) -> {
+		int resCount = this.executer.runEachAsTask(this.runRemoteQuery(remoteGraph1,"getClassPropertyDetails.txt",clazz,predicate),new ResultHandler() {
+			@Override
+			public void handleResult(ResultLine item,int count) throws Exception {
 				System.out.println("Type link found" + predicate + " for shape: " + clazz + " #" + count);
 				String typeLink = createTypeLink(classProperty,"o",count);
 				String refType = item.getIRI("refType");
@@ -516,7 +533,7 @@ public class Main
 				if (refType == null && xsdType == null)
 				{
 					System.out.println("No type found checking if its a external reference");
-					if(this.runRemoteQuery(remoteGraph1,"checkClassPropertyExternalRef.txt",clazz,predicate).iterator().hasNext())
+					if(runRemoteQuery(remoteGraph1,"checkClassPropertyExternalRef.txt",clazz,predicate).iterator().hasNext())
 					{
 						System.out.println("Referencing to a subject, which is not typed, report error");
 						localStore.add(typeLink,"RDF2Graph:type","RDF2Graph:invalid");
@@ -542,7 +559,8 @@ public class Main
 					localStore.add(xsdType,"rdf:type","RDF2Graph:DataType");
 					recoverTypelink(clazz,typeLink,predicate,xsdType,"simple");
 				}
-			});
+			}
+		});
 		if(resCount == 0)
 			throw new Error("Class property that has no ref to types");
 	}

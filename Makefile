@@ -9,7 +9,7 @@ all: $(patsubst %.entities.sparql,%.html,$(wildcard *.entities.sparql))
 	sed $$'/%ENTITIES%/ {\n  r $<\n  d\n}' < data.sparql.template > $@
 
 %.nt: %.data.sparql data.nt.jq
-	curl --get --header 'Accept: application/json' --data-urlencode "query=$$(<$<)" https://query.wikidata.org/sparql | ./data.nt.jq --raw-output > $@
+	curl --silent --show-error --get --header 'Accept: application/json' --data-urlencode "query=$$(<$<)" https://query.wikidata.org/sparql | ./data.nt.jq --raw-output > $@
 
 %-results: %.nt
 	fuseki-server --file $< /$* & \

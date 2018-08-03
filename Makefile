@@ -24,7 +24,9 @@ all: $(patsubst %.entities.sparql,%.html,$(wildcard *.entities.sparql))
 	{ printf '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n<title>%s</title>\n<script async src="https://lucaswerkmeister.de/annotate-wikidata-entity-ids-in-shex.js"></script>\n<link rel="stylesheet" href="https://rawgit.com/richleland/pygments-css/master/default.css">\n</head>\n<body>\n<pre id="shex">\n' $* && pygmentize -f html $< && printf '</pre>\n</body>\n</html>\n'; } > $@
 
 clean:
-	$(RM) $(patsubst %.sparql,%.ttl,$(wildcard *.sparql))
-	$(RM) -r $(patsubst %.sparql,%-results,$(wildcard *.sparql))
-	$(RM) -r $(patsubst %.sparql,%.shex,$(wildcard *.sparql))
+	$(RM) $(patsubst %.entities.sparql,%.data.sparql,$(wildcard *.entities.sparql))
+	$(RM) $(patsubst %.entities.sparql,%.nt,$(wildcard *.entities.sparql))
+	$(RM) -r $(patsubst %.entities.sparql,%-results,$(wildcard *.entities.sparql))
+	$(RM) $(patsubst %.entities.sparql,%.shex,$(wildcard *.entities.sparql))
+	$(RM) $(patsubst %.entities.sparql,%.html,$(wildcard *.entities.sparql))
 	$(RM) -r run/ temp/

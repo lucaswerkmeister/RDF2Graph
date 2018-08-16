@@ -6,9 +6,15 @@ def lang_tag(value):
   else ""
   end;
 
+def datatype(value):
+  if value.datatype
+  then "^^<" + value.datatype + ">"
+  else ""
+  end;
+
 def literal(value):
   if value.type == "literal"
-  then "\"" + (value.value | gsub("\""; "\\\"")) + "\"" + lang_tag(value)
+  then "\"" + (value.value | gsub("\""; "\\\"")) + "\"" + lang_tag(value) + datatype(value)
   else "<" + value.value + ">"
   end;
 

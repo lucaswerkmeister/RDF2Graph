@@ -12,9 +12,19 @@ def datatype(value):
   else ""
   end;
 
+def escape(value):
+  value |
+  gsub("\\\\"; "\\\\") |
+  gsub("\t"; "\\t") |
+  gsub("\b"; "\\b") |
+  gsub("\n"; "\\n") |
+  gsub("\r"; "\\r") |
+  gsub("\f"; "\\f") |
+  gsub("\""; "\\\"");
+
 def literal(value):
   if value.type == "literal"
-  then "\"" + (value.value | gsub("\""; "\\\"")) + "\"" + lang_tag(value) + datatype(value)
+  then "\"" + escape(value.value) + "\"" + lang_tag(value) + datatype(value)
   else "<" + value.value + ">"
   end;
 

@@ -14,9 +14,9 @@ all: $(patsubst %.entities.sparql,%.html,$(wildcard *.entities.sparql))
 %-results: %.nt
 	set -m ; \
 	FUSEKI_BASE=$*-fuseki fuseki-server --file $< --port 0 /$* & \
-	while ! [[ -v FUSEKI_PORT ]]; do while read -r line; do if [[ $$line == n* ]]; then FUSEKI_PORT=$${line##*:}; break 2; fi; done < <(jobs -x lsof -p %1 -a -i -Fn -n -P); sleep 5s; done ; \
+	while ! [[ -v FUSEKI_PORT ]]; do while read -r line; do if [[ $$line == n* ]]; then FUSEKI_PORT=$${line##*:}; break 2; fi; done < <(jobs -x lsof -p %% -a -i -Fn -n -P); sleep 5s; done ; \
 	java -jar RDF2Graph.jar $@ http://localhost:$$FUSEKI_PORT/$*/query --all --executeSimplify --useClassPropertyRecoveryPerClass --remoteGraphFull https://query.wikidata.org/sparql ; \
-	kill %1
+	kill %%
 
 %.shex: %-results
 	shexExporter/export.sh $< $@

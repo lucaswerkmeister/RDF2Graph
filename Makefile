@@ -12,9 +12,10 @@ all: $(patsubst %.entities.sparql,%.html,$(wildcard *.entities.sparql))
 	curl --silent --show-error --get --header 'Accept: application/json' --data-urlencode "query=$$(<$<)" https://query.wikidata.org/sparql | jq --from-file ./data.nt.jq --raw-output > $@
 
 %-results: %.nt
-	FUSEKI_BASE=$*-fuseki fuseki-server --file $< /$* & \
-	bash -c 'while ! exec 3</dev/tcp/localhost/3030; do sleep 5s; done' 2>/dev/null ; \
-	java -jar RDF2Graph.jar $@ http://localhost:3030/$*/query --all --executeSimplify --useClassPropertyRecoveryPerClass --remoteGraphFull https://query.wikidata.org/sparql ; \
+	set -m ; \
+	FUSEKI_BASE=$*-fuseki fuseki-server --file $< --port 0 /$* & \
+	while ! [[ -v FUSEKI_PORT ]]; do while read -r line; do if [[ $$line == n* ]]; then FUSEKI_PORT=$${line##*:}; break 2; fi; done < <(jobs -x lsof -p %1 -a -i -Fn -n -P); sleep 5s; done ; \
+	java -jar RDF2Graph.jar $@ http://localhost:$$FUSEKI_PORT/$*/query --all --executeSimplify --useClassPropertyRecoveryPerClass --remoteGraphFull https://query.wikidata.org/sparql ; \
 	kill %1
 
 %.shex: %-results

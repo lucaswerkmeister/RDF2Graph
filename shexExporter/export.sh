@@ -24,21 +24,22 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 echo "exporting"
-rm -rf ./temp
-mkdir temp
-jena.tdbquery --loc $project --query $DIR/queries/all.txt --results N3 > temp/temp1.n3
-jena.tdbquery --loc $project --query $DIR/queries/createRoot.txt --results N3 > temp/temp2.n3
-jena.tdbloader -loc ./temp/tempdb --graph=http://ssb.wur.nl/shexExporter temp/temp1.n3
-jena.tdbloader -loc ./temp/tempdb --graph=http://ssb.wur.nl/shexExporter temp/temp2.n3
-jena.tdbupdate -loc ./temp/tempdb --update $DIR/queries/removeSubClassOfThing.txt
+tempdir=$project/temp
+rm -rf "$tempdir"
+mkdir "$tempdir"
+jena.tdbquery --loc $project --query $DIR/queries/all.txt --results N3 > "$tempdir/temp1.n3"
+jena.tdbquery --loc $project --query $DIR/queries/createRoot.txt --results N3 > "$tempdir/temp2.n3"
+jena.tdbloader -loc "$tempdir/tempdb/" --graph=http://ssb.wur.nl/shexExporter "$tempdir/temp1.n3"
+jena.tdbloader -loc "$tempdir/tempdb/" --graph=http://ssb.wur.nl/shexExporter "$tempdir/temp2.n3"
+jena.tdbupdate -loc "$tempdir/tempdb/" --update $DIR/queries/removeSubClassOfThing.txt
 #hack not to use to much memory
-while [[ $(jena.tdbquery -loc ./temp/tempdb/ --query $DIR/queries/removeSubClassOfMeshDone.txt | grep '[01]' |sed 's/.*\([01]\).*/\1/') -eq 1 ]] ; do
-  jena.tdbupdate -loc ./temp/tempdb --update $DIR/queries/removeSubClassOfMesh.txt
+while [[ $(jena.tdbquery -loc "$tempdir/tempdb/" --query $DIR/queries/removeSubClassOfMeshDone.txt | grep '[01]' |sed 's/.*\([01]\).*/\1/') -eq 1 ]] ; do
+  jena.tdbupdate -loc "$tempdir/tempdb/" --update $DIR/queries/removeSubClassOfMesh.txt
   echo "."
 done
-jena.tdbdump --loc ./temp/tempdb > temp/temp.n4
-$DIR/jsonconvert.js convert ./temp/temp.n4  > temp/out.json
-$DIR/jsonconvert.js compact temp/out.json -c $DIR/context.json > temp/compact.json
-$DIR/jsonconvert.js frame temp/compact.json -f $DIR/frame.json > temp/result.json
+jena.tdbdump --loc "$tempdir/tempdb/" > "$tempdir/temp.n4"
+$DIR/jsonconvert.js convert "$tempdir/temp.n4"  > "$tempdir/out.json"
+$DIR/jsonconvert.js compact "$tempdir/out.json" -c $DIR/context.json > "$tempdir/compact.json"
+$DIR/jsonconvert.js frame "$tempdir/compact.json" -f $DIR/frame.json > "$tempdir/result.json"
 
-$DIR/shexbuilder.js > $outfile
+$DIR/shexbuilder.js "$tempdir/result.json" > $outfile

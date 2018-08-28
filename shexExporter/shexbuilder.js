@@ -342,7 +342,7 @@ function processResult(data)
   process.stdout.write('\n');
 }
 
-loadJSON_ld("temp/result.json",  function (err, data) {
+loadJSON_ld(process.argv[2] || "temp/result.json",  function (err, data) {
   if (err) {
     console.log('Error: ' + err);
     return;

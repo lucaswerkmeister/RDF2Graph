@@ -31,4 +31,3 @@ clean:
 	$(RM) $(patsubst %.entities.sparql,%.shex,$(wildcard *.entities.sparql))
 	$(RM) $(patsubst %.entities.sparql,%.html,$(wildcard *.entities.sparql))
 	$(RM) -r $(patsubst %.entities.sparql,%-fuseki,$(wildcard *.entities.sparql))
-	$(RM) -r temp/

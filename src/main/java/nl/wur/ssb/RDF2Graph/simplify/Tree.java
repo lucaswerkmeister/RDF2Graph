@@ -106,7 +106,11 @@ public class Tree
 
 	public void calculateSubClassOfIntanceOfCount()
 	{
-		root.calculateSubClassOfIntanceOfCount(new HashMap<String,Integer>());
+		root.calculateSubClassOfIntanceOfCount();
+		for(TreeNode child : root.getAllChildren())
+		{
+			child.calculateSubClassOfIntanceOfCount();
+		}
 	}
 
 	public String findSharedType(String type1,String type2)

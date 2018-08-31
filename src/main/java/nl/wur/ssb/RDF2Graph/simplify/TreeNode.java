@@ -3,6 +3,8 @@ package nl.wur.ssb.RDF2Graph.simplify;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
 
 public class TreeNode
@@ -23,8 +25,8 @@ public class TreeNode
 	private int markParent;
 	private boolean simplifyStep2Done = false;
 	private boolean simplifyStep3Done = false;
-	private int subClassOffInstanceCount = -2;
-	private int classInstanceCount = -2;
+	private int subClassOffInstanceCount = -1;
+	private int classInstanceCount = 0;
 
 	TreeNode(String name,Tree tree,int classInstanceCount)
 	{
@@ -82,31 +84,45 @@ public class TreeNode
 			this.temporaryLinksPrepMap.put(name,new UniqueTypeLink(name,count,forwardMinMultiplicity,forwardMaxMultiplicity,reverseMinMultiplicity,reverseMaxMultiplicity));
 		}
 	}
-	void calculateSubClassOfIntanceOfCount(HashMap<String,Integer> countSet)
+
+	/**
+	 * Returns the set of all the node's direct and indirect children.
+	 * The node itself is not included, unless it is a child of itself
+	 * (i.e., the tree is actually a cyclic graph, with the node being part of a cycle).
+	 */
+	Set<TreeNode> getAllChildren()
 	{
-		if(this.subClassOffInstanceCount == -2)
+		Set<TreeNode> allChildren = new HashSet<TreeNode>();
+		Queue<TreeNode> workingQueue = new LinkedList<TreeNode>(this.childs);
+		TreeNode child;
+
+		while((child = workingQueue.poll()) != null)
 		{
-			HashMap<String,Integer> myCountSet = new HashMap<String,Integer>();
-			for(TreeNode child : this.childs)
+			if (allChildren.contains(child))
 			{
-				child.calculateSubClassOfIntanceOfCount(myCountSet);
+				continue;
 			}
-			int totalCount = -1;
-			for(int val : myCountSet.values())
-			{
-				if(val != -1)
-				{
-					if(totalCount == -1)
-						totalCount = 0;
-					totalCount += val;
-				}
-			}
-			countSet.putAll(myCountSet);
-			this.subClassOffInstanceCount = totalCount;
+			workingQueue.addAll(child.childs);
+			allChildren.add(child);
 		}
-		if(this.classInstanceCount != -2)
+
+		return allChildren;
+	}
+
+	void calculateSubClassOfIntanceOfCount()
+	{
+		if(this.subClassOffInstanceCount == -1)
 		{
-			countSet.put(this.name,this.classInstanceCount);
+			int totalCount = 0;
+			Set<TreeNode> allChildren = this.getAllChildren();
+			allChildren.add(this); // always count our own instances
+
+			for(TreeNode child : allChildren)
+			{
+				totalCount += child.classInstanceCount;
+			}
+
+			this.subClassOffInstanceCount = totalCount;
 		}
 	}
 

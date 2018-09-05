@@ -110,6 +110,30 @@ public class TreeNode
 		return allChildren;
 	}
 
+	/**
+	 * Returns the set of all the node's direct and indirect parents.
+	 * The node itself is not included, unless it is a parent of itself
+	 * (i.e., the tree is actually a cyclic graph, with the node being part of a cycle).
+	 */
+	Set<TreeNode> getAllParents()
+	{
+		Set<TreeNode> allParents = new HashSet<TreeNode>();
+		Queue<TreeNode> workingQueue = new LinkedList<TreeNode>(this.parents);
+		TreeNode parent;
+
+		while((parent = workingQueue.poll()) != null)
+		{
+			if (allParents.contains(parent))
+			{
+				continue;
+			}
+			workingQueue.addAll(parent.parents);
+			allParents.add(parent);
+		}
+
+		return allParents;
+	}
+
 	void calculateSubClassOfIntanceOfCount()
 	{
 		if(this.subClassOffInstanceCount == -1)
@@ -217,29 +241,31 @@ public class TreeNode
 	void simplifyStep3_2()
 	{
 		this.temporaryLinks.removeAll(temporaryLinksToRemove);
+		temporaryLinksToRemove.clear();
 	}
-	//Remove element that are already referenced by parent node
-	void simplifyStep4(HashSet<UniqueTypeLink> parentsContents)
+	//Mark elements that are already referenced by parent node
+	void simplifyStep4_1()
 	{
-		LinkedList<UniqueTypeLink> toRemove = new LinkedList<UniqueTypeLink>();
-		for(UniqueTypeLink dest : temporaryLinks)
+	outer:for(UniqueTypeLink dest : temporaryLinks)
 		{
-			for(UniqueTypeLink parentContent : parentsContents)
+			for(TreeNode parent : this.getAllParents())
 			{
-				if(tree.isChildOf(parentContent.typeName,dest.typeName))
+				for(UniqueTypeLink parentContent : parent.temporaryLinks)
 				{
-					toRemove.add(dest);
-					break;
+					if(tree.isChildOf(parentContent.typeName,dest.typeName))
+					{
+						temporaryLinksToRemove.add(dest);
+						continue outer;
+					}
 				}
 			}
 		}
-		this.temporaryLinks.removeAll(toRemove);
-		HashSet<UniqueTypeLink> copy = (HashSet<UniqueTypeLink>)parentsContents.clone();
-		copy.addAll(this.temporaryLinks);
-		for(TreeNode child : this.childs)
-		{
-			child.simplifyStep4(copy);
-		}
+	}
+	//Remove previously marked elements that are already referenced by parent node
+	void simplifyStep4_2()
+	{
+		this.temporaryLinks.removeAll(temporaryLinksToRemove);
+		temporaryLinksToRemove.clear();
 	}
 
 

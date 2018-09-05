@@ -1,5 +1,6 @@
 package nl.wur.ssb.RDF2Graph.simplify;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -56,7 +57,18 @@ public class Tree
 	{
 		// disabled because ShEx has no special support for subclasses
 		// TODO instead of killing this step, resurrect the removed links in the ShEx exporter?
-		//this.root.simplifyStep4(new HashSet<UniqueTypeLink>());
+		/*
+		Collection<TreeNode> allNodes = this.root.getAllChildren();
+		allNodes.add(this.root);
+		for(TreeNode node : allNodes)
+		{
+			node.simplifyStep4_1();
+		}
+		for(TreeNode node : allNodes)
+		{
+			node.simplifyStep4_2();
+		}
+		*/
 	}
 
 	public TreeNode getNode(String node)

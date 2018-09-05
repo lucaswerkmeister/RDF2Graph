@@ -274,7 +274,10 @@ public class TreeNode
 		this.markParent = count++;
 		for(TreeNode parent : this.parents)
 		{
-			parent.markParentList1(count);
+			if(parent.markParent == 0 || parent.markParent > count)
+			{
+				parent.markParentList1(count);
+			}
 		}
 	}
 	//Search for the hihgest possible common ancestor

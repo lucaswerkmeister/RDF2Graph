@@ -27,7 +27,7 @@ public class Tree
 
 	public void simplifyStep2() throws Exception
 	{
-		this.root.simplifyStep2(new HashSet<TreeNode>());
+		this.root.simplifyStep2();
 	}
 
 	public void simplifyStep3()

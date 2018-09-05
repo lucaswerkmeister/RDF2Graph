@@ -171,17 +171,14 @@ public class TreeNode
 		markParent = 0;
 	}
 	//Combine from upper level to lower level
-	void simplifyStep2(HashSet<TreeNode> visited) throws Exception
+	void simplifyStep2() throws Exception
 	{
 		if(simplifyStep2Done)
 			return;
 		simplifyStep2Done = true;
-		if(visited.contains(this))
-			throw new Exception("cycle in rdfs:subClassOf hiearchy found");
-		visited.add(this);
 		for(TreeNode child : this.childs)
 		{
-			child.simplifyStep2(visited);
+			child.simplifyStep2();
 			if(this.isRoot)
 				continue;
 			this.temporaryLinks.addAll(child.temporaryLinks);
@@ -209,7 +206,6 @@ public class TreeNode
 				}
 			}
 		}
-		visited.remove(this);
 	}
 	//Mark 'none splitting' elements
 	LinkedList<TreeNode> simplifyStep3_1()

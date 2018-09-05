@@ -237,12 +237,13 @@ function dropProp(typeLinks) {
 function classToShape(clazz) {
   let shape = '';
 
-  shape += `${formatIri(clazz['@id'])} {`;
+  shape += `${formatIri(clazz['@id'])}`;
   if (clazz.subClassOf) {
     const superClasses = to_array(clazz.subClassOf);
-    shape += ` # & ${superClasses.map(formatIri).join()}`;
-    superClasses.forEach(droppedTypes.add.bind(droppedTypes));
+    shape += ` EXTENDS ${superClasses.map(formatIri).join(' ')}`;
+    superClasses.forEach(usedTypes.add.bind(usedTypes));
   }
+  shape += ' {';
 
   const props = to_array(clazz.property);
   props.sort(compareOn('rdfProperty', '@id'));

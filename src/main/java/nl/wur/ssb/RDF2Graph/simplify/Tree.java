@@ -55,9 +55,6 @@ public class Tree
 
 	public void simplifyStep4()
 	{
-		// disabled because ShEx has no special support for subclasses
-		// TODO instead of killing this step, resurrect the removed links in the ShEx exporter?
-		/*
 		Collection<TreeNode> allNodes = this.root.getAllChildren();
 		allNodes.add(this.root);
 		for(TreeNode node : allNodes)
@@ -68,7 +65,6 @@ public class Tree
 		{
 			node.simplifyStep4_2();
 		}
-		*/
 	}
 
 	public TreeNode getNode(String node)

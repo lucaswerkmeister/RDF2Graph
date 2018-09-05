@@ -32,10 +32,23 @@ public class Tree
 	public void simplifyStep3()
 	{
 		LinkedList<TreeNode> todo = new LinkedList<TreeNode>();
-		todo.addAll(this.root.simplifyStep3());
+		LinkedList<TreeNode> all = new LinkedList<TreeNode>();
+		LinkedList<TreeNode> tmp;
+
+		tmp = this.root.simplifyStep3_1();
+		todo.addAll(tmp);
+		all.addAll(tmp);
+
 		while(!todo.isEmpty())
 		{
-			todo.addAll(todo.removeFirst().simplifyStep3());
+			tmp = todo.removeFirst().simplifyStep3_1();
+			todo.addAll(tmp);
+			all.addAll(tmp);
+		}
+
+		for(TreeNode node : all)
+		{
+			node.simplifyStep3_2();
 		}
 	}
 

@@ -22,6 +22,7 @@ public class TreeNode
 	/*The temporary field used in the algoritm*/
 	private HashMap<String,UniqueTypeLink> temporaryLinksPrepMap = new HashMap<String,UniqueTypeLink>();
 	private HashSet<UniqueTypeLink> temporaryLinks = new HashSet<UniqueTypeLink>();
+	private HashSet<UniqueTypeLink> temporaryLinksToRemove = new HashSet<UniqueTypeLink>();
 	private int markParent;
 	private boolean simplifyStep2Done = false;
 	private boolean simplifyStep3Done = false;
@@ -140,6 +141,7 @@ public class TreeNode
 	{
 		this.temporaryLinksPrepMap.clear();
 		temporaryLinks.clear();
+		temporaryLinksToRemove.clear();
 		simplifyStep2Done = false;
 		simplifyStep3Done = false;
 		markParent = 0;
@@ -185,20 +187,13 @@ public class TreeNode
 		}
 		visited.remove(this);
 	}
-	//Remove 'none splitting' elements
-	LinkedList<TreeNode> simplifyStep3()
+	//Mark 'none splitting' elements
+	LinkedList<TreeNode> simplifyStep3_1()
 	{
-		//If one of the parents is not processed yet then re-add it to the end of the list
-		for(TreeNode parent : this.parents)
+		if(this.simplifyStep3Done)
 		{
-			if(parent.simplifyStep3Done == false)
-			{
-				LinkedList<TreeNode> toRet = new LinkedList<TreeNode>();
-				toRet.add(this);
-				return toRet;
-			}
+			return new LinkedList<TreeNode>();
 		}
-		LinkedList<UniqueTypeLink> toRemove = new LinkedList<UniqueTypeLink>();
 		for(UniqueTypeLink dest : temporaryLinks)
 		{
 			int count = 0;
@@ -212,12 +207,16 @@ public class TreeNode
 			}
 			if(count == 1) //count != 0 || count < 2
 			{
-				toRemove.add(dest);
+				temporaryLinksToRemove.add(dest);
 			}
 		}
-		this.temporaryLinks.removeAll(toRemove);
 		this.simplifyStep3Done = true;
 		return this.childs;
+	}
+	//Remove previously marked 'none splitting' elements
+	void simplifyStep3_2()
+	{
+		this.temporaryLinks.removeAll(temporaryLinksToRemove);
 	}
 	//Remove element that are already referenced by parent node
 	void simplifyStep4(HashSet<UniqueTypeLink> parentsContents)

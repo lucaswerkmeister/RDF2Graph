@@ -319,12 +319,7 @@ public class TreeNode
 	{
 		if(this == parent)
 			return true;
-		for(TreeNode checkParent : this.parents)
-		{
-			if(checkParent.hasParent(parent))
-				return true;
-		}
-		return false;
+		return this.getAllParents().contains(parent);
 	}
 
 	public String toString()

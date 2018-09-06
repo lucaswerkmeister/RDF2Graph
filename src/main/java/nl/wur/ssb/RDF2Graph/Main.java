@@ -313,7 +313,19 @@ public class Main
 					@Override
 					public void handleResult(ResultLine item,int index) throws Exception {
 						String clazz = item.getIRI("class");
-						for(ResultLine subClassItem : runRemoteQuery(remoteGraphFull,"getAllSubClassOfClass.txt",clazz))
+						Iterable<ResultLine> subClassItems;
+						try
+						{
+							subClassItems = runRemoteQuery(remoteGraphFull,"getAllSubClassOfClass.txt",clazz);
+						}
+						catch (Exception e)
+						{
+							System.err.printf("Error while fetching super- and subclasses of <%s>:\n", clazz);
+							e.printStackTrace();
+							System.err.println("Skipping this class and continuing...");
+							return;
+						}
+						for(ResultLine subClassItem : subClassItems)
 						{
 							String child = subClassItem.getIRI("child");
 							String parent = subClassItem.getIRI("parent");

@@ -25,7 +25,6 @@ public class TreeNode
 	private HashSet<UniqueTypeLink> temporaryLinksToRemove = new HashSet<UniqueTypeLink>();
 	private int markParent;
 	private boolean simplifyStep2Done = false;
-	private boolean simplifyStep3Done = false;
 	private int subClassOffInstanceCount = -1;
 	private int classInstanceCount = 0;
 
@@ -167,7 +166,6 @@ public class TreeNode
 		temporaryLinks.clear();
 		temporaryLinksToRemove.clear();
 		simplifyStep2Done = false;
-		simplifyStep3Done = false;
 		markParent = 0;
 	}
 	//Combine from upper level to lower level
@@ -208,12 +206,8 @@ public class TreeNode
 		}
 	}
 	//Mark 'none splitting' elements
-	LinkedList<TreeNode> simplifyStep3_1()
+	void simplifyStep3_1()
 	{
-		if(this.simplifyStep3Done)
-		{
-			return new LinkedList<TreeNode>();
-		}
 		for(UniqueTypeLink dest : temporaryLinks)
 		{
 			int count = 0;
@@ -230,8 +224,6 @@ public class TreeNode
 				temporaryLinksToRemove.add(dest);
 			}
 		}
-		this.simplifyStep3Done = true;
-		return this.childs;
 	}
 	//Remove previously marked 'none splitting' elements
 	void simplifyStep3_2()

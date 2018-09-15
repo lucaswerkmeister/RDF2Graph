@@ -29,8 +29,21 @@ WITH {
     ?subject ?wdt ?object.
   }
 } AS %indirectStatements
+WITH {
+  SELECT (?object AS ?subject_) (wdt:P31 AS ?predicate_) (?class AS ?object_) WHERE {
+    INCLUDE %indirectStatements.
+    ?object wdt:P31 ?class.
+  }
+} AS %indirectClasses_
+WITH {
+  SELECT (?subject_ AS ?subject) (?predicate_ AS ?predicate) (?object_ AS ?object) WHERE {
+    INCLUDE %indirectClasses_.
+  }
+} AS %indirectClasses
 WHERE {
   { INCLUDE %directStatements. }
   UNION
   { INCLUDE %indirectStatements. }
+  UNION
+  { INCLUDE %indirectClasses. }
 }

@@ -876,14 +876,14 @@ public class Main
 			queryFile = "remoteSubClassOf/" + queryFile;
 		else
 			queryFile = "remote/" + queryFile;
-		Iterable<ResultLine> toRet = graph.runQuery(queryFile,true,args);
+		Iterable<ResultLine> toRet = graph.runQuery(queryFile,args);
 		System.out.println("time: " + (System.currentTimeMillis() - millis) + " for query " + queryFile);
 		return toRet;
 	}
 
 	private Iterable<ResultLine> runLocalQuery(RDFSimpleCon graph,boolean preload,String queryFile,Object ... args) throws Exception
 	{
-		return graph.runQuery("local/" + queryFile,true,args);
+		return graph.runQuery("local/" + queryFile,args);
 	}
 
 	private void runUpdateQueryOnce(RDFSimpleCon graph,String file,Object ...args)

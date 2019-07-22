@@ -25,6 +25,8 @@ def escape(value):
 def literal(value):
   if value.type == "literal"
   then "\"" + escape(value.value) + "\"" + lang_tag(value) + datatype(value)
+  elif value.type == "bnode"
+  then "_:" + value.value
   else "<" + value.value + ">"
   end;
 
